@@ -21,6 +21,7 @@ import {SpecialDesignProxy} from './SpecialDesignProxy';
 import {TradeAdvance} from './TradeAdvance';
 import {UnitedNationsMissionOne} from './UnitedNationsMissionOne';
 import {ValuableGases} from './ValuableGases';
+import { CapitolOfLuna } from './CapitolOfLuna';
 
 export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
   module: 'community',
@@ -38,6 +39,7 @@ export const COMMUNITY_CARD_MANIFEST = new ModuleManifest({
     [CardName.ATHENA]: {Factory: Athena, compatibility: 'ares'},
   },
   preludeCards: {
+    [CardName.CAPITOL_OF_LUNA]: {Factory: CapitolOfLuna},
     [CardName.RESEARCH_GRANT]: {Factory: ResearchGrant},
     [CardName.VALUABLE_GASES]: {Factory: ValuableGases, compatibility: 'venus'},
     [CardName.AEROSPACE_MISSION]: {Factory: AerospaceMission, compatibility: 'colonies'},

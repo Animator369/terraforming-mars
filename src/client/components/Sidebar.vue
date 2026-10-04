@@ -35,7 +35,10 @@
           </i>
       </div>
   </a>
-  <a v-if="coloniesCount > 0" href="#colonies" :title="$t('Jump to colonies')">
+  <a v-if="coloniesCount > 0" 
+     href="javascript:void(0)" 
+     :title="$t('Colonies & Fleets')" 
+     @click.prevent="$emit('toggleColonies')">
       <div class="sidebar_item sidebar_item_shortcut">
           <i class="sidebar_icon sidebar_icon--colonies"></i>
       </div>
@@ -80,6 +83,7 @@ import LanguageIcon from '@/client/components/LanguageIcon.vue';
 
 export default defineComponent({
   name: 'Sidebar',
+  emits: ['toggleColonies'],
   props: {
     playerNumber: {
       type: Number,

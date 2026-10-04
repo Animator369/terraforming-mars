@@ -1,7 +1,6 @@
 {
-     "Effect: When you play an Science tag, you pay 2M€ less for it.":"Эффект: Разыгрывая карту с меткой открытия, платите на 2 M€ меньше.",
-
-     "You start with 47 M€.": "Вы начинаете с 47 М€.",
-     "Action: Spend 4 M€ to increase (one of) your LOWEST PRODUCTION 1 step.": "Действие: Потратьте 4 М€, чтобы увеличить одно своё НАИМЕНЬШЕЕ производство на 1.",
-     "${0} drew ${1} and ${2}": "${0} добрал карту ${1} и ${2}"
- }
+	"Effect: When you play an Science tag, you pay 2M€ less for it.": "Эффект: Разыгрывая карту с меткой открытия, платите на 2 M€ меньше.",
+	"You start with 47 M€.": "Вы начинаете с 47 М€.",
+	"Action: Spend 4 M€ to increase (one of) your LOWEST PRODUCTION 1 step.": "Действие: Потратьте 4 М€, чтобы увеличить одно своё НАИМЕНЬШЕЕ производство на 1.",
+	"${0} drew ${1} and ${2}": "${0} добрал карту ${1} и ${2}"
+}

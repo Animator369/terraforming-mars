@@ -604,6 +604,7 @@ export enum CardName {
   POLITICAL_UPRISING = 'Political Uprising',
   BY_ELECTION = 'By-Election',
   EXECUTIVE_ORDER = 'Executive Order',
+  CAPITOL_OF_LUNA = 'Capitol of Luna',
 
   // Community colonies
   SCIENCE_TAG_BLANK_CARD = '',
