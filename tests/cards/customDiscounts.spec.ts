@@ -27,6 +27,8 @@ const NOT_DISPLAYED: ReadonlyArray<CardName> = [
   CardName.ROGERS,
   // The discount belongs to the cards it holds.
   CardName.SELF_REPLICATING_ROBOTS,
+  // Community
+  CardName.CAPITOL_OF_LUNA,
 ];
 
 describe('customDiscounts', () => {

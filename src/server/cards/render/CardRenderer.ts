@@ -437,13 +437,13 @@ abstract class Builder<T> {
 
   // Postlude
   public cityUpgrade(options?: ItemOptions): this {
-    const item = new CardRenderItem(CardRenderItemType.CITY_UPGRADE, -1, options);
+    const item = new CardRenderItem(CardRenderItemType.CITY_UPGRADE, undefined, options);
     item.size = options?.size ?? Size.MEDIUM;
     return this._appendToRow(item);
   }
 
   public greeneryUpgrade(options?: {size?: Size, withO2?: boolean, any?: boolean} & ItemOptions): this {
-    const item = new CardRenderItem(CardRenderItemType.GREENERY_UPGRADE, -1, options);
+    const item = new CardRenderItem(CardRenderItemType.GREENERY_UPGRADE, undefined, options);
     item.size = options?.size ?? Size.MEDIUM;
     if (options?.withO2 !== false) {
       item.secondaryTag = AltSecondaryTag.OXYGEN;
@@ -455,20 +455,20 @@ abstract class Builder<T> {
   }
 
   public oceanUpgrade(options?: ItemOptions): this {
-    const item = new CardRenderItem(CardRenderItemType.OCEAN_UPGRADE, -1, options);
+    const item = new CardRenderItem(CardRenderItemType.OCEAN_UPGRADE, undefined, options);
     item.size = options?.size ?? Size.MEDIUM;
     return this._appendToRow(item);
   }
 
   public oceanTile(options?: ItemOptions): this {
-    const item = new CardRenderItem(CardRenderItemType.OCEAN_TILE, -1, options);
+    const item = new CardRenderItem(CardRenderItemType.OCEAN_TILE, undefined, options);
     item.size = options?.size ?? Size.MEDIUM;
     return this._appendToRow(item);
   }
 
   public postludeTile(cardName?: CardName, options?: ItemOptions): this {
     const opts = {...options, postludeCard: cardName};
-    const item = new CardRenderItem(CardRenderItemType.POSTLUDE_TILE, -1, opts);
+    const item = new CardRenderItem(CardRenderItemType.POSTLUDE_TILE, undefined, opts);
     item.size = options?.size ?? Size.MEDIUM;
     return this._appendToRow(item);
   }
