@@ -2,9 +2,18 @@ import {expect} from 'chai';
 import {renderMarkdown} from '@/client/markdown/markdown';
 import {PreferencesManager} from '@/client/utils/PreferencesManager';
 
+import {FakeLocalStorage} from '../components/FakeLocalStorage';
+
 describe('markdown', () => {
+  let localStorage: FakeLocalStorage;
+
+  beforeEach(() => {
+    localStorage = new FakeLocalStorage();
+    FakeLocalStorage.register(localStorage);
+  });
+
   afterEach(() => {
-    localStorage.removeItem('lang');
+    FakeLocalStorage.deregister(localStorage);
     PreferencesManager.resetForTest();
     delete (window as any)._translations;
   });
