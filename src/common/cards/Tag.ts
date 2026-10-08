@@ -16,6 +16,7 @@ export enum Tag {
     WILD = 'wild',
     EVENT = 'event',
     CLONE = 'clone',
+    INFRASTRUCTURE = 'infrastructure',
 }
 
 export const ALL_TAGS = [
@@ -36,4 +37,5 @@ export const ALL_TAGS = [
   Tag.WILD,
   Tag.EVENT,
   Tag.CLONE,
+  Tag.INFRASTRUCTURE,
 ] as const;

@@ -4,6 +4,8 @@ import {CardRenderer} from '../../render/CardRenderer';
 import {StandardProjectCard} from '../../StandardProjectCard';
 import {PlaceGreeneryTile} from '../../../deferredActions/PlaceGreeneryTile';
 
+import {PostludeExpansion} from '../../../postlude/PostludeExpansion';
+
 export class GreeneryStandardProject extends StandardProjectCard {
   constructor() {
     super({
@@ -22,11 +24,18 @@ export class GreeneryStandardProject extends StandardProjectCard {
   }
 
   public override canPayWith(player: IPlayer) {
+    const res: {seeds?: boolean, steel?: boolean, titanium?: boolean} = {};
     if (player.tableau.has(CardName.SOYLENT_SEEDLING_SYSTEMS)) {
-      return {seeds: true};
-    } else {
-      return {};
+      res.seeds = true;
     }
+    const postlude = PostludeExpansion.getPostludePaymentOptions(player, this);
+    if (postlude?.steel) {
+      res.steel = true;
+    }
+    if (postlude?.titanium) {
+      res.titanium = true;
+    }
+    return res;
   }
 
   public override canAct(player: IPlayer): boolean {

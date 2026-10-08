@@ -7,6 +7,7 @@ import {InputError} from './InputError';
 import {PaymentOptions} from '../../common/inputs/Payment';
 import {Message} from '../../common/logs/Message';
 import {PlayCardMetadata, SelectCardToPlay} from './SelectCardToPlay';
+import {PostludeExpansion} from '../postlude/PostludeExpansion';
 
 export class SelectStandardProjectToPlay extends SelectCardToPlay<IStandardProjectCard> {
   constructor(
@@ -54,6 +55,17 @@ export class SelectStandardProjectToPlay extends SelectCardToPlay<IStandardProje
     if (!this.player.canSpend(input.payment, reserveUnits)) {
       throw new InputError('You do not have that many resources');
     }
+
+    const isCityPrefab = card.name === CardName.CITY_STANDARD_PROJECT && this.player.tableau.has(CardName.PREFABRICATION_OF_HUMAN_HABITATS);
+    const steelFromUpgrade = input.payment.steel > 0 && !isCityPrefab;
+    const titaniumFromUpgrade = input.payment.titanium > 0;
+    if (steelFromUpgrade && titaniumFromUpgrade) {
+      const postludeOptions = PostludeExpansion.getPostludePaymentOptions(this.player, card);
+      if (postludeOptions?.exclusiveSteelTitanium) {
+        throw new InputError('Cannot pay with both Steel and Titanium: Machinery Factory and Metallurgy Workshop share no available adjacent spaces for this tile.');
+      }
+    }
+
     const amountPaid = this.player.payingAmount(input.payment, paymentOptions);
     const requiredCost = details.overriddenCost ?? card.getAdjustedCost(this.player);
     if (amountPaid < requiredCost) {
@@ -64,6 +76,28 @@ export class SelectStandardProjectToPlay extends SelectCardToPlay<IStandardProje
 
   // Public for tests
   public payAndPlay(card: IStandardProjectCard, payment: Payment) {
+    const isCityPrefab = card.name === CardName.CITY_STANDARD_PROJECT && this.player.tableau.has(CardName.PREFABRICATION_OF_HUMAN_HABITATS);
+    const steelFromUpgrade = payment.steel > 0 && !isCityPrefab;
+    const titaniumFromUpgrade = payment.titanium > 0;
+    const postludeOptions = PostludeExpansion.getPostludePaymentOptions(this.player, card);
+
+    if (steelFromUpgrade && titaniumFromUpgrade && postludeOptions?.commonSpaces) {
+      this.player.postludePlacementConstraint = {
+        spaces: postludeOptions.commonSpaces,
+        label: 'Machinery Factory & Metallurgy Workshop',
+      };
+    } else if (steelFromUpgrade && postludeOptions?.steelSpaces) {
+      this.player.postludePlacementConstraint = {
+        spaces: postludeOptions.steelSpaces,
+        label: 'Machinery Factory',
+      };
+    } else if (titaniumFromUpgrade && postludeOptions?.titaniumSpaces) {
+      this.player.postludePlacementConstraint = {
+        spaces: postludeOptions.titaniumSpaces,
+        label: 'Metallurgy Workshop',
+      };
+    }
+
     card.payAndExecute(this.player, payment);
     this.cb(card);
   }

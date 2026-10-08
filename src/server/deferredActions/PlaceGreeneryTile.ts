@@ -4,6 +4,7 @@ import {DeferredAction} from './DeferredAction';
 import {Priority} from './Priority';
 import {PlacementType} from '../boards/PlacementType';
 import {Space} from '../boards/Space';
+import {PostludeExpansion} from '../postlude/PostludeExpansion';
 
 export class PlaceGreeneryTile extends DeferredAction<Space | undefined> {
   constructor(
@@ -17,12 +18,13 @@ export class PlaceGreeneryTile extends DeferredAction<Space | undefined> {
     const board = this.player.game.board;
     const spacesForType = board.getAvailableSpacesForType(this.player, this.on);
     const filtered = board.filterSpacesAroundRedCity(spacesForType);
-    if (filtered.length === 0) {
+    const {spaces, title} = PostludeExpansion.applyPlacementConstraint(this.player, filtered, this.getTitle());
+    if (spaces.length === 0) {
       this.cb(undefined);
       return undefined;
     }
 
-    return new SelectSpace(this.getTitle(), filtered)
+    return new SelectSpace(title, spaces)
       .andThen((space) => {
         this.player.game.addGreenery(this.player, space);
         this.cb(space);

@@ -11,7 +11,7 @@
       <div class="board-space-coords">{{ getSpaceName(space.id) }}</div>
     </template>
     <template v-if="tileView === 'show'">
-      <div :class="playerColorCss" v-if="space.color !== undefined"></div>
+      <div :class="playerColorCss" v-if="space.color !== undefined && space.upgradeTile === undefined"></div>
       <template v-if="space.gagarin !== undefined">
         <div v-if="space.gagarin === 0" class='gagarin'></div>
         <div v-else class='gagarin visited'></div>
@@ -26,6 +26,7 @@
       <UndergroundToken v-if="claimedToken !== undefined" :token="claimedToken" location="board"/>
       <div v-if="space.excavator !== undefined" class="underground-excavator" :class="'underground-excavator--' + space.excavator"></div>
       <div v-if="space.spaceType === SpaceType.DEFLECTION_ZONE" class="board-space-type-deflection-zone"></div>
+      <BoardSpaceUpgrade v-if="space.upgradeTile !== undefined" :upgrade="space.upgradeTile"/>
     </template>
     <div class="board-log-highlight" :data_log_highlight_id="space.id"></div>
     </div>
@@ -37,6 +38,7 @@ import {defineComponent} from 'vue';
 import Bonus from '@/client/components/Bonus.vue';
 import BoardSpaceTile from '@/client/components/board/BoardSpaceTile.vue';
 import BoardSpaceCube from '@/client/components/board/BoardSpaceCube.vue';
+import BoardSpaceUpgrade from '@/client/components/board/BoardSpaceUpgrade.vue';
 import UndergroundToken from '@/client/components/underworld/UndergroundToken.vue';
 import {TileView} from '@/client/components/board/TileView';
 import {SpaceModel} from '@/common/models/SpaceModel';
@@ -70,6 +72,7 @@ export default defineComponent({
     Bonus,
     BoardSpaceTile,
     BoardSpaceCube,
+    BoardSpaceUpgrade,
     UndergroundToken,
   },
   computed: {

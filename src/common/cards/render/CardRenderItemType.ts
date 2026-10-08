@@ -77,6 +77,13 @@ export const CardRenderItemType = {
   CORRUPTION_SHIELD: 'corruptive-block',
   GEOSCAN_ICON: 'geoscan-icon',
   UNDERGROUND_SHELTERS: 'underground-shelters',
+
+  // Postlude
+  CITY_UPGRADE: 'city-upgrade',
+  GREENERY_UPGRADE: 'greenery-upgrade',
+  OCEAN_UPGRADE: 'ocean-upgrade',
+  OCEAN_TILE: 'ocean-tile-hex',
+  POSTLUDE_TILE: 'postlude-tile',
 } as const;
 
 export type CardRenderItemType = typeof CardRenderItemType[keyof typeof CardRenderItemType];

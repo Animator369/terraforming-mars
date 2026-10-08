@@ -2422,6 +2422,43 @@
   .greenery-tile-oxygen {
     background-image: url(./assets/tiles/greenery.png);
   }
+  .ocean-tile {
+    background-image: url(./assets/tiles/ocean.png);
+  }
+  .upgrade-tile {
+    position: relative;
+
+    &::after {
+      content: "▲";
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      font-size: 8px;
+      line-height: 11px;
+      color: #ffd700;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid #ffd700;
+      border-radius: 50%;
+      width: 12px;
+      height: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+      font-weight: bold;
+      pointer-events: none;
+    }
+  }
+  .postlude-tile {
+    background-image: url(./assets/tiles/special.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    filter: brightness(0.85) drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.5));
+    display: inline-block;
+    vertical-align: middle;
+  }
   .tile-size--S {
     width: 30px;
     height: 32px;
@@ -2834,4 +2871,16 @@ each(@card_resource_types, {
 
 .card-resource-cube {
   background-image: url("./assets/cube.png");
+}
+
+.card-resource-space-food {
+  background-image: url("./assets/resources/space-food.webp");
+}
+
+.card-resource-probiotics {
+  background-image: url("./assets/resources/probiotics.webp");
+}
+
+.card-resource-ore {
+  background-image: url("./assets/resources/ore.png");
 }

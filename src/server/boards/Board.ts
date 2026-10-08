@@ -377,6 +377,14 @@ export abstract class Board {
         if (space.volcanic) {
           serialized.volcanic = true;
         }
+        if (space.upgradeTile !== undefined) {
+          serialized.upgradeTile = {
+            cardId: space.upgradeTile.cardId,
+            upgradeType: space.upgradeTile.upgradeType,
+            ownerId: space.upgradeTile.owner.id,
+            additionalPlacementBonus: space.upgradeTile.additionalPlacementBonus,
+          };
+        }
         return serialized;
       }),
     };
@@ -426,6 +434,17 @@ export abstract class Board {
     }
     if (serialized.volcanic !== undefined) {
       space.volcanic = serialized.volcanic;
+    }
+    if (serialized.upgradeTile !== undefined) {
+      const upgradeOwner = this.findPlayer(players, serialized.upgradeTile.ownerId);
+      if (upgradeOwner !== undefined) {
+        space.upgradeTile = {
+          cardId: serialized.upgradeTile.cardId,
+          upgradeType: serialized.upgradeTile.upgradeType,
+          owner: upgradeOwner,
+          additionalPlacementBonus: serialized.upgradeTile.additionalPlacementBonus,
+        };
+      }
     }
     return space;
   }

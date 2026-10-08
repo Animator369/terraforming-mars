@@ -40,6 +40,7 @@ const MODULE_ABBREVIATIONS = {
   starwars: 'w',
   underworld: 'u',
   deltaProject: 'd',
+  postlude: 'o',
 } satisfies Record<GameModule, string>;
 
 const TYPE_ABBREVIATIONS = {
@@ -78,6 +79,7 @@ const TAG_ABBREVIATIONS = {
   [Tag.CLONE]: 'f',
   none: 'g',
   [Tag.CRIME]: 'h',
+  [Tag.INFRASTRUCTURE]: 'i',
 } satisfies Record<TagOption, string>;
 
 export function hashToModel(windowLocationHash: string): CardListModel {
@@ -100,6 +102,7 @@ export function hashToModel(windowLocationHash: string): CardListModel {
       starwars: true,
       underworld: true,
       deltaProject: true,
+      postlude: true,
     },
     types: {
       event: true,
@@ -135,6 +138,7 @@ export function hashToModel(windowLocationHash: string): CardListModel {
       wild: true,
       event: true,
       clone: true,
+      infrastructure: true,
       none: true,
     },
     resources: {
@@ -165,6 +169,9 @@ export function hashToModel(windowLocationHash: string): CardListModel {
       [CardResource.JOURNALISM]: true,
       [CardResource.ACTIVIST]: true,
       [CardResource.SUPPLY_CHAIN]: true,
+      [CardResource.SPACE_FOOD]: true,
+      [CardResource.PROBIOTICS]: true,
+      [CardResource.ORE]: true,
     },
     searchIndex: SearchIndex.create(),
     namesOnly: true,

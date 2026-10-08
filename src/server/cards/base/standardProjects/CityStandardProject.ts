@@ -5,6 +5,8 @@ import {StandardProjectCard} from '../../StandardProjectCard';
 import {PlaceCityTile} from '../../../deferredActions/PlaceCityTile';
 import {Resource} from '../../../../common/Resource';
 
+import {PostludeExpansion} from '../../../postlude/PostludeExpansion';
+
 export class CityStandardProject extends StandardProjectCard {
   constructor() {
     super({
@@ -24,11 +26,18 @@ export class CityStandardProject extends StandardProjectCard {
   }
 
   public override canPayWith(player: IPlayer) {
-    if (player.tableau.get(CardName.PREFABRICATION_OF_HUMAN_HABITATS)) {
-      return {steel: true};
-    } else {
-      return {};
+    const res: {steel?: boolean, titanium?: boolean} = {};
+    if (player.tableau.get(CardName.PREFABRICATION_OF_HUMAN_HABITATS) !== undefined) {
+      res.steel = true;
     }
+    const postlude = PostludeExpansion.getPostludePaymentOptions(player, this);
+    if (postlude?.steel) {
+      res.steel = true;
+    }
+    if (postlude?.titanium) {
+      res.titanium = true;
+    }
+    return res;
   }
 
   public override canAct(player: IPlayer): boolean {

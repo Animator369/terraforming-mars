@@ -23,4 +23,8 @@ export type Warning =
  'selfTarget' |
  'pharmacyUnion' |
  'kaguyaTech' |
- 'underworldtokendiscard';
+ 'underworldtokendiscard' |
+ 'postludeMachineryFactory' |
+ 'postludeMetallurgyWorkshop' |
+ 'postludeBothUpgrades' |
+ 'postludeExclusiveUpgrades';

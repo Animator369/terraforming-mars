@@ -57,6 +57,7 @@ import {PathfindersExpansion} from './pathfinders/PathfindersExpansion';
 import {PathfindersData} from './pathfinders/PathfindersData';
 import {DeltaProject} from './cards/delta/DeltaProject';
 import {AddResourcesToCard} from './deferredActions/AddResourcesToCard';
+import {SelectResourceTypeDeferred} from './deferredActions/SelectResourceTypeDeferred';
 import {ColonyDeserializer} from './colonies/ColonyDeserializer';
 import {GameLoader} from './database/GameLoader';
 import {DEFAULT_GAME_OPTIONS, GameOptions} from './game/GameOptions';
@@ -276,7 +277,12 @@ export class Game implements IGame, Logger {
         starwars: partialOptions.starWarsExpansion ?? false,
         underworld: partialOptions.underworldExpansion ?? false,
         deltaProject: partialOptions.deltaProjectExpansion ?? false,
+        postlude: partialOptions.postludeExpansion ?? false,
       };
+    } else {
+      if (partialOptions.postludeExpansion === undefined && partialOptions.expansions.postlude !== undefined) {
+        partialOptions.postludeExpansion = partialOptions.expansions.postlude;
+      }
     }
     const gameOptions = {...DEFAULT_GAME_OPTIONS, ...partialOptions};
 
@@ -1447,6 +1453,28 @@ export class Game implements IGame, Logger {
         this.defer(new GainResourcesDeferred(player, Resource.MEGACREDITS, {count: 6}));
       }
     }
+
+    // Postlude Ocean Upgrades additional placement bonuses and Amusement Park bonus
+    let amusementParkMultiplier = 1;
+    for (const adjacent of this.board.getAdjacentSpaces(space)) {
+      if (adjacent.upgradeTile?.cardId === CardName.AMUSEMENT_PARK) {
+        amusementParkMultiplier++;
+      }
+      if (adjacent.upgradeTile?.additionalPlacementBonus) {
+        for (const bonus of adjacent.upgradeTile.additionalPlacementBonus) {
+          if (bonus === SpaceBonus.MEGACREDITS) {
+            player.stock.add(Resource.MEGACREDITS, 1, {log: true});
+          } else {
+            this.grantSpaceBonus(player, bonus, 1);
+          }
+        }
+      }
+    }
+    if (!coveringExistingTile && amusementParkMultiplier > 1) {
+      for (let i = 1; i < amusementParkMultiplier; i++) {
+        this.grantSpaceBonuses(player, space);
+      }
+    }
   }
 
   public simpleAddTile(player: IPlayer, space: Space, tile: Tile) {
@@ -1535,6 +1563,22 @@ export class Game implements IGame, Logger {
         {title: 'Select how to pay for building a colony'}))
         .andThen(() => this.defer(new BuildColony(player)));
       break;
+    case SpaceBonus.FLOATER:
+      this.defer(new AddResourcesToCard(player, CardResource.FLOATER, {count: count}));
+      break;
+    case SpaceBonus.ORE:
+      this.defer(new AddResourcesToCard(player, CardResource.ORE, {count: count}));
+      break;
+    case SpaceBonus.STANDARD_RESOURCE:
+      this.defer(new SelectResourceTypeDeferred(
+        player,
+        [Resource.MEGACREDITS, Resource.STEEL, Resource.TITANIUM, Resource.PLANTS, Resource.ENERGY, Resource.HEAT],
+        'Select standard resource to gain'))
+        .andThen((res) => {
+          player.stock.add(res, count, {log: true});
+          return undefined;
+        });
+      break;
     default:
       throw new Error('Unhandled space bonus ' + spaceBonus + '. Report this exact error, please.');
     }
@@ -1550,7 +1594,16 @@ export class Game implements IGame, Logger {
     PartyHooks.applyGreensRulingPolicy(player, space);
 
     if (shouldRaiseOxygen) {
-      this.increaseOxygenLevel(player, 1);
+      if (this.oxygenLevel >= constants.MAX_OXYGEN_LEVEL) {
+        const adjacentMarsHospital = this.board.getAdjacentSpaces(space).some(
+          (adj) => adj.upgradeTile?.cardId === CardName.MARS_HOSPITAL && adj.upgradeTile.owner === player,
+        );
+        if (adjacentMarsHospital) {
+          player.increaseTerraformRating(1);
+        }
+      } else {
+        this.increaseOxygenLevel(player, 1);
+      }
     }
     return undefined;
   }

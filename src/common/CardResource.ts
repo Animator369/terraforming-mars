@@ -46,4 +46,9 @@ export enum CardResource {
   JOURNALISM = 'Journalism',
   ACTIVIST = 'Activist',
   SUPPLY_CHAIN = 'Supply Chain',
+
+  // Postlude
+  SPACE_FOOD = 'Space Food',
+  PROBIOTICS = 'Probiotics',
+  ORE = 'Ore',
 }

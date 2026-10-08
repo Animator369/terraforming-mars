@@ -1,5 +1,6 @@
 import {AltSecondaryTag} from './AltSecondaryTag';
 import {Tag} from '../Tag';
+import {CardName} from '../CardName';
 import {TileType} from '../../TileType';
 import {CardComponent} from './CardComponent';
 import {CardRenderItemType} from './CardRenderItemType';
@@ -126,6 +127,8 @@ export interface ICardRenderItem extends CardComponent {
   resource?: CardResource;
   /** Has a value when type is CardRenderItemType.TAG. Renders a tag */
   tag?: Tag;
+  /** Postlude card name for card-specific upgrade tiles */
+  postludeCard?: CardName;
 }
 
 export function isICardRenderItem(item: ItemType): item is ICardRenderItem {

@@ -7,6 +7,8 @@ import {ICardRenderCorpBoxAction, ICardRenderCorpBoxEffect, ICardRenderCorpBoxEf
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
 import {CardResource} from '../../../common/CardResource';
 import {Tag} from '../../../common/cards/Tag';
+import {CardName} from '../../../common/cards/CardName';
+import {UpgradeType} from '../../../common/postlude/PostludeTypes';
 import {liteBoolean, LiteBoolean} from '../../../common/LiteBoolean';
 import {isLiveServer} from '../../utils/server';
 
@@ -417,6 +419,56 @@ abstract class Builder<T> {
     const item = new CardRenderItem(CardRenderItemType.CITY_OR_SPECIAL_TILE, -1, options);
     item.size = options?.size ?? Size.MEDIUM;
     return this._appendToRow(item);
+  }
+
+  // Postlude
+  public cityUpgrade(options?: ItemOptions): this {
+    const item = new CardRenderItem(CardRenderItemType.CITY_UPGRADE, -1, options);
+    item.size = options?.size ?? Size.MEDIUM;
+    return this._appendToRow(item);
+  }
+
+  public greeneryUpgrade(options?: {size?: Size, withO2?: boolean, any?: boolean} & ItemOptions): this {
+    const item = new CardRenderItem(CardRenderItemType.GREENERY_UPGRADE, -1, options);
+    item.size = options?.size ?? Size.MEDIUM;
+    if (options?.withO2 !== false) {
+      item.secondaryTag = AltSecondaryTag.OXYGEN;
+    }
+    if (options?.any === true) {
+      item.anyPlayer = true;
+    }
+    return this._appendToRow(item);
+  }
+
+  public oceanUpgrade(options?: ItemOptions): this {
+    const item = new CardRenderItem(CardRenderItemType.OCEAN_UPGRADE, -1, options);
+    item.size = options?.size ?? Size.MEDIUM;
+    return this._appendToRow(item);
+  }
+
+  public oceanTile(options?: ItemOptions): this {
+    const item = new CardRenderItem(CardRenderItemType.OCEAN_TILE, -1, options);
+    item.size = options?.size ?? Size.MEDIUM;
+    return this._appendToRow(item);
+  }
+
+  public postludeTile(cardName?: CardName, options?: ItemOptions): this {
+    const opts = {...options, postludeCard: cardName};
+    const item = new CardRenderItem(CardRenderItemType.POSTLUDE_TILE, -1, opts);
+    item.size = options?.size ?? Size.MEDIUM;
+    return this._appendToRow(item);
+  }
+
+  public postludeUpgrade(typeOrCardName?: UpgradeType | CardName, options?: ItemOptions): this {
+    if (typeOrCardName === 'CITY_UPGRADE') {
+      return this.cityUpgrade(options);
+    } else if (typeOrCardName === 'GREENERY_UPGRADE') {
+      return this.greeneryUpgrade(options);
+    } else if (typeOrCardName === 'OCEAN_UPGRADE') {
+      return this.oceanUpgrade(options);
+    } else {
+      return this.postludeTile(typeOrCardName, options);
+    }
   }
 
   // Underworld

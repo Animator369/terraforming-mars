@@ -220,10 +220,12 @@ export default defineComponent({
           return this.playerinput.paymentOptions.heat === true;
         case 'steel':
           return this.tags.includes(Tag.BUILDING) ||
-          this.playerView.thisPlayer.lastCardPlayed === CardName.LAST_RESORT_INGENUITY;
+          this.playerView.thisPlayer.lastCardPlayed === CardName.LAST_RESORT_INGENUITY ||
+          this.card.postludeCanPayWith?.steel === true;
         case 'titanium':
           return this.canUseTitaniumRegularly() ||
-          this.playerinput.paymentOptions.lunaTradeFederationTitanium === true;
+          this.playerinput.paymentOptions.lunaTradeFederationTitanium === true ||
+          this.card.postludeCanPayWith?.titanium === true;
         case 'plants':
           return this.tags.includes(Tag.BUILDING) && this.playerinput.paymentOptions.plants === true;
         case 'microbes':
@@ -249,7 +251,9 @@ export default defineComponent({
     /** @override */
     getTitaniumResourceRate(): number {
       const titaniumValue = this.playerView.thisPlayer.titaniumValue;
-      if (this.canUseTitaniumRegularly() || this.card?.standardProjectCanPayWith?.titanium === true) {
+      if (this.canUseTitaniumRegularly() ||
+          this.card?.standardProjectCanPayWith?.titanium === true ||
+          this.card?.postludeCanPayWith?.titanium === true) {
         return titaniumValue;
       }
       return titaniumValue - 1;
@@ -267,6 +271,10 @@ export default defineComponent({
     },
     doSave() {
       if (this.card === undefined) {
+        return;
+      }
+      if (this.card.postludeExclusiveSteelTitanium && this.payment.steel > 0 && this.payment.titanium > 0) {
+        alert('Cannot pay with both Steel and Titanium: Machinery Factory and Metallurgy Workshop share no available adjacent spaces for this tile.');
         return;
       }
       this.onsave({type: 'projectCard', card: this.card.name, payment: this.payment});

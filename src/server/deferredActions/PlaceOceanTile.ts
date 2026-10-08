@@ -6,6 +6,7 @@ import {PlacementType} from '../boards/PlacementType';
 import {Space} from '../boards/Space';
 import {CardName} from '../../common/cards/CardName';
 import {Message} from '../../common/logs/Message';
+import {PostludeExpansion} from '../postlude/PostludeExpansion';
 
 type Options = {
   title?: string | Message,
@@ -43,6 +44,15 @@ export class PlaceOceanTile extends DeferredAction<Space | undefined> {
       const on = this.options?.on || 'ocean';
       availableSpaces = this.player.game.board.getAvailableSpacesForType(this.player, on);
       title = this.options?.title ?? this.getTitle(on);
+    }
+
+    const constrained = PostludeExpansion.applyPlacementConstraint(this.player, availableSpaces, title);
+    availableSpaces = constrained.spaces;
+    title = constrained.title;
+
+    if (availableSpaces.length === 0) {
+      this.cb(undefined);
+      return undefined;
     }
 
     return new SelectSpace(title, availableSpaces)

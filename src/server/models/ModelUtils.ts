@@ -13,6 +13,8 @@ import {Tag} from '../../common/cards/Tag';
 import {asArray} from '../../common/utils/utils';
 import {isIStandardProjectCard} from '../cards/IStandardProjectCard';
 
+import {PostludeExpansion} from '../postlude/PostludeExpansion';
+
 export function cardsToModel(
   player: IPlayer,
   cards: ReadonlyArray<ICard>,
@@ -76,6 +78,39 @@ export function cardsToModel(
     }
     if (card.warnings.size > 0) {
       model.warnings = Array.from(card.warnings);
+    }
+
+    const postludeOptions = PostludeExpansion.getPostludePaymentOptions(player, card as any);
+    if (postludeOptions !== undefined) {
+      if (postludeOptions.exclusiveSteelTitanium) {
+        model.postludeExclusiveSteelTitanium = true;
+      }
+      if (isIProjectCard(card)) {
+        model.postludeCanPayWith = {
+          steel: postludeOptions.steel,
+          titanium: postludeOptions.titanium,
+        };
+      }
+
+      const warnings = model.warnings ? [...model.warnings] : [];
+      const isSP = isIStandardProjectCard(card);
+      const isProject = isIProjectCard(card);
+      const steelWarn = postludeOptions.steel === true && (isSP || (isProject && !card.tags.includes(Tag.BUILDING)));
+      const titaniumWarn = postludeOptions.titanium === true && (isSP || (isProject && !card.tags.includes(Tag.SPACE)));
+
+      if (postludeOptions.exclusiveSteelTitanium && steelWarn && titaniumWarn) {
+        warnings.push('postludeExclusiveUpgrades');
+      } else if (steelWarn && titaniumWarn) {
+        warnings.push('postludeBothUpgrades');
+      } else if (steelWarn) {
+        warnings.push('postludeMachineryFactory');
+      } else if (titaniumWarn) {
+        warnings.push('postludeMetallurgyWorkshop');
+      }
+
+      if (warnings.length > 0) {
+        model.warnings = warnings;
+      }
     }
     return model;
   });

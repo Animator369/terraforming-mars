@@ -6,6 +6,7 @@ import {MAX_OXYGEN_LEVEL} from '../../../../common/constants';
 import {SelectSpace} from '../../../inputs/SelectSpace';
 import {Units} from '../../../../common/Units';
 import {message} from '../../../logs/MessageBuilder';
+import {Space} from '../../../boards/Space';
 
 
 export class ConvertPlants extends StandardActionCard {
@@ -23,11 +24,24 @@ export class ConvertPlants extends StandardActionCard {
     });
   }
 
+  private static getGreeneryCost(player: IPlayer, space?: Space): number {
+    if (space !== undefined && player.game.board.getAdjacentSpaces(space).some(
+      (adj) => adj.upgradeTile?.cardId === CardName.SOIL_ENRICHMENT_LAB && adj.upgradeTile.owner === player,
+    )) {
+      return Math.max(1, player.plantsNeededForGreenery - 1);
+    }
+    return player.plantsNeededForGreenery;
+  }
+
   public canAct(player: IPlayer): boolean {
-    if (player.plants < player.plantsNeededForGreenery) {
+    const availableSpaces = player.game.board.getAvailableSpacesForGreenery(player);
+    if (availableSpaces.length === 0) {
       return false;
     }
-    if (player.game.board.getAvailableSpacesForGreenery(player).length === 0) {
+    const minCost = availableSpaces.some((s) => ConvertPlants.getGreeneryCost(player, s) < player.plantsNeededForGreenery) ?
+      player.plantsNeededForGreenery - 1 : player.plantsNeededForGreenery;
+
+    if (player.plants < minCost) {
       return false;
     }
     if (player.game.getOxygenLevel() === MAX_OXYGEN_LEVEL) {
@@ -38,18 +52,21 @@ export class ConvertPlants extends StandardActionCard {
     return player.canAfford({
       cost: 0,
       tr: {oxygen: 1},
-      reserveUnits: Units.of({plants: player.plantsNeededForGreenery}),
+      reserveUnits: Units.of({plants: minCost}),
     });
   }
 
   public action(player: IPlayer) {
+    const spaces = player.game.board.getAvailableSpacesForGreenery(player);
+    const validSpaces = spaces.filter((s) => player.plants >= ConvertPlants.getGreeneryCost(player, s));
     return new SelectSpace(
-      message('Convert ${0} plants into greenery', (b) => b.number(player.plantsNeededForGreenery)),
-      player.game.board.getAvailableSpacesForGreenery(player))
+      message('Convert plants into greenery'),
+      validSpaces)
       .andThen((space) => {
         this.actionUsed(player);
+        const cost = ConvertPlants.getGreeneryCost(player, space);
         player.game.addGreenery(player, space);
-        player.plants -= player.plantsNeededForGreenery;
+        player.plants -= cost;
         return undefined;
       });
   }

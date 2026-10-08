@@ -4,6 +4,8 @@ import {CardRenderer} from '../../render/CardRenderer';
 import {PlaceOceanTile} from '../../../deferredActions/PlaceOceanTile';
 import {StandardProjectCard} from '../../StandardProjectCard';
 
+import {PostludeExpansion} from '../../../postlude/PostludeExpansion';
+
 export class AquiferStandardProject extends StandardProjectCard {
   constructor() {
     super({
@@ -21,11 +23,18 @@ export class AquiferStandardProject extends StandardProjectCard {
   }
 
   public override canPayWith(player: IPlayer) {
+    const res: {kuiperAsteroids?: boolean, steel?: boolean, titanium?: boolean} = {};
     if (player.tableau.has(CardName.KUIPER_COOPERATIVE)) {
-      return {kuiperAsteroids: true};
-    } else {
-      return {};
+      res.kuiperAsteroids = true;
     }
+    const postlude = PostludeExpansion.getPostludePaymentOptions(player, this);
+    if (postlude?.steel) {
+      res.steel = true;
+    }
+    if (postlude?.titanium) {
+      res.titanium = true;
+    }
+    return res;
   }
 
   public override canAct(player: IPlayer): boolean {

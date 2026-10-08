@@ -6,6 +6,8 @@ import {SpaceType} from '../../common/boards/SpaceType';
 import {SpaceId} from '../../common/Types';
 import {UndergroundResourceToken} from '../../common/underworld/UndergroundResourceToken';
 import {SpaceCube} from '../../common/boards/SpaceCube';
+import {CardName} from '../../common/cards/CardName';
+import {UpgradeType} from '../../common/postlude/PostludeTypes';
 
 export interface SerializedBoard {
   spaces: Array<SerializedSpace>;
@@ -25,4 +27,10 @@ export interface SerializedSpace {
   undergroundResources?: UndergroundResourceToken;
   excavator?: PlayerId;
   coOwner?: PlayerId;
+  upgradeTile?: {
+    cardId: CardName;
+    upgradeType: UpgradeType;
+    ownerId: PlayerId;
+    additionalPlacementBonus?: Array<SpaceBonus>;
+  };
 }
