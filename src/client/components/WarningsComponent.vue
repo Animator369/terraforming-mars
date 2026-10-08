@@ -36,6 +36,10 @@ const descriptions: Record<Warning, string> = {
   'pharmacyUnion': 'Note: playing a card with a microbe tag will cause you to lose 4 M€ (or as much as possible).',
   'kaguyaTech': 'Warning: Your only greeneries are special tiles.',
   'underworldtokendiscard': 'Warning: You will have to discard an underworld resource token you rely on.',
+  'postludeMachineryFactory': 'Paying with steel limits tile placement to spaces adjacent to Machinery Factory.',
+  'postludeMetallurgyWorkshop': 'Paying with titanium limits tile placement to spaces adjacent to Metallurgy Workshop.',
+  'postludeBothUpgrades': 'Paying with steel & titanium limits tile placement to spaces adjacent to both Upgrades.',
+  'postludeExclusiveUpgrades': 'Cannot pay with both steel & titanium simultaneously (no shared adjacent spaces).',
 };
 
 export default defineComponent({

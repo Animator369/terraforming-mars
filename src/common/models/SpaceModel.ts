@@ -5,6 +5,7 @@ import {SpaceType} from '../boards/SpaceType';
 import {SpaceId} from '../Types';
 import {UndergroundResourceToken} from '../underworld/UndergroundResourceToken';
 import {SpaceCube} from '../boards/SpaceCube';
+import {SpaceUpgradeModel} from '../postlude/PostludeTypes';
 
 export type SpaceHighlight = undefined | 'noctis' | 'volcanic';
 
@@ -27,4 +28,5 @@ export type SpaceModel = {
 
   undergroundResource?: UndergroundResourceToken;
   excavator?: Color;
+  upgradeTile?: SpaceUpgradeModel;
 }

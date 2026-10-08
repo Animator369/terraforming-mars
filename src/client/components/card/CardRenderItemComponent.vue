@@ -1,7 +1,7 @@
 <template>
   <div class="card-item-container">
     <div class="card-res-amount" v-if="item.showDigit">{{ amountAbs }}</div>
-    <div :class="componentClasses" v-for="index in itemsToShow" v-html="itemHtmlContent" :key="index"></div>
+    <div :class="componentClasses" :style="customStyle" v-for="index in itemsToShow" v-html="itemHtmlContent" :key="index"></div>
     <div class="card-over" v-if="item.over !== undefined">over {{item.over}}</div>
   </div>
 </template>
@@ -14,6 +14,7 @@ import {AltSecondaryTag} from '@/common/cards/render/AltSecondaryTag';
 import {Size} from '@/common/cards/render/Size';
 import {Tag} from '@/common/cards/Tag';
 import {ICardRenderItem, isICardRenderItem} from '@/common/cards/render/Types';
+import {POSTLUDE_CARD_IMAGE_MAP} from '@/common/postlude/PostludeTypes';
 import {cardResourceCSS} from '../common/cardResources';
 
 export default defineComponent({
@@ -271,9 +272,36 @@ export default defineComponent({
         return ['card-geoscan-icon'];
       case CardRenderItemType.UNDERGROUND_SHELTERS:
         return ['card-underground-shelters'];
+      case CardRenderItemType.CITY_UPGRADE:
+        return ['card-tile', 'city-tile', 'upgrade-tile', 'city-upgrade-tile', this.tileSizeClass];
+      case CardRenderItemType.GREENERY_UPGRADE:
+        return [
+          'card-tile',
+          this.item.secondaryTag === AltSecondaryTag.OXYGEN ? 'greenery-tile-oxygen' : 'greenery-tile',
+          'upgrade-tile',
+          'greenery-upgrade-tile',
+          this.tileSizeClass,
+        ];
+      case CardRenderItemType.OCEAN_UPGRADE:
+        return ['card-tile', 'ocean-tile', 'upgrade-tile', 'ocean-upgrade-tile', this.tileSizeClass];
+      case CardRenderItemType.OCEAN_TILE:
+        return ['card-tile', 'ocean-tile', this.tileSizeClass];
+      case CardRenderItemType.POSTLUDE_TILE:
+        return ['card-tile', 'postlude-tile', this.tileSizeClass];
       default:
         return [];
       }
+    },
+    customStyle(): Record<string, string> {
+      if (this.item.postludeCard !== undefined) {
+        const fileName = POSTLUDE_CARD_IMAGE_MAP[this.item.postludeCard];
+        if (fileName) {
+          return {
+            backgroundImage: `url(/assets/postlude/${fileName})`,
+          };
+        }
+      }
+      return {};
     },
     amountAbs(): number {
       return this.item.amountInside ? 1 : Math.abs(this.item.amount ?? 1);

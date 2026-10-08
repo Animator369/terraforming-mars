@@ -165,6 +165,9 @@ const CARD_RESOURCES: ReadonlyArray<IconEntry> = [
   {iconClass: 'card-resource-journalism', label: 'Journalism', official: false, expansions: ['underworld']},
   {iconClass: 'card-resource-activist', label: 'Activist', official: false, expansions: ['underworld']},
   {iconClass: 'card-resource-supply-chain', label: 'Supply Chain', official: false, expansions: ['underworld']},
+  {iconClass: 'card-resource-space-food', label: 'Space Food', official: false, expansions: ['postlude']},
+  {iconClass: 'card-resource-probiotics', label: 'Probiotics', official: false, expansions: ['postlude']},
+  {iconClass: 'card-resource-ore', label: 'Ore', official: false, expansions: ['postlude']},
 ];
 
 const TILES: ReadonlyArray<IconEntry> = [

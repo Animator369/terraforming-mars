@@ -170,6 +170,12 @@
                                 <div class="create-game-expansion-icon expansion-icon-deltaProject"></div>
                                 <span v-i18n>Delta Project</span>&nbsp;<span title="Alpha — work in progress">(&#945;)</span><span></span>&nbsp;<a :href="wikiUrls.deltaProject" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
                             </label>
+
+                            <input type="checkbox" name="postlude" id="postlude-checkbox" v-model="expansions.postlude">
+                            <label for="postlude-checkbox" class="expansion-button">
+                                <div class="create-game-expansion-icon expansion-icon-postlude"></div>
+                                <span v-i18n>Postlude</span>&nbsp;<a :href="wikiUrls.postlude" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
+                            </label>
                         </div>
 
                         <div class="create-game-page-column">

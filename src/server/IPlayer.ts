@@ -36,6 +36,7 @@ import {PlayedCards} from './cards/PlayedCards';
 import {From} from './logs/From';
 import {Tag} from '../common/cards/Tag';
 import {SelectStandardProjectToPlay} from './inputs/SelectStandardProjectToPlay';
+import {Space} from './boards/Space';
 
 /**
  * Represents additional costs a player must pay to execute an action.
@@ -50,6 +51,7 @@ export type CanAffordOptions = Partial<PaymentOptions> & {
   tr?: TRSource,
   /** Represents when the action rewards the tile space more than once. */
   bonusMultiplier?: number,
+  exclusiveSteelTitanium?: boolean,
 }
 
 /**
@@ -101,6 +103,10 @@ export interface IPlayer {
   actionsTakenThisRound: number;
   lastCardPlayed: CardName | undefined;
   pendingInitialActions: Array<ICorporationCard>;
+  postludePlacementConstraint?: {
+    spaces: ReadonlyArray<Space>;
+    label: string;
+  };
 
   // Cards
   dealtCorporationCards: Array<ICorporationCard>;

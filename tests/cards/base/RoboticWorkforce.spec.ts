@@ -421,6 +421,9 @@ describe('RoboticWorkforce', () => {
         if (isICorporationCard(card)) {
           player.playCorporationCard(card);
         } else if (isIProjectCard(card)) {
+          if (!card.canPlay(player)) {
+            return;
+          }
           player.playCard(card);
         }
 

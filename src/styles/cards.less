@@ -404,6 +404,18 @@ input[type="radio"]:checked+.filterDiv::after {
   content: "";
 }
 
+.postlude-icon:after {
+  .expansion-icon-base();
+  border: 1px solid @grey_900;
+  color: #fff;
+  background: #2b7a78;
+  font-family: Prototype, sans-serif;
+  font-weight: bold;
+  font-size: 10px;
+  line-height: 17px;
+  content: "PL";
+}
+
 /*********** Style the tags ************/
 
 .tag-wild {
@@ -461,7 +473,7 @@ input[type="radio"]:checked+.filterDiv::after {
 }
 
 .tag-moon {
-  background-image: url("./assets/tags/moon.png")
+  background-image: url("./assets/tags/moon.webp")
 }
 
 .tag-mars {
@@ -486,6 +498,10 @@ input[type="radio"]:checked+.filterDiv::after {
 
 .tag-empty {
   background-image: url("./assets/tags/empty.png");
+}
+
+.tag-infrastructure {
+  background-image: url("./assets/tags/infrastructure.webp");
 }
 
 // Tag shape/size overrides (req, blue, floater, size--S, ...) live in
@@ -664,6 +680,42 @@ input[type="radio"]:checked+.filterDiv::after {
 
 .special-tile {
   background-image: url(./assets/tiles/special.png);
+}
+
+.upgrade-tile {
+  position: relative;
+
+  &::after {
+    content: "▲";
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    font-size: 8px;
+    line-height: 11px;
+    color: #ffd700;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid #ffd700;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    font-weight: bold;
+    pointer-events: none;
+  }
+}
+
+.postlude-tile {
+  background-image: url(./assets/tiles/special.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  filter: brightness(0.85) drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.5));
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .oxygen-tile {
@@ -1080,6 +1132,17 @@ input[type="radio"]:checked+.filterDiv::after {
   background-image: url(./assets/expansion_icons/expansion_icon_deltaProject.png);
 }
 
+.expansion-icon-postlude {
+  border: 1px solid #333;
+  color: #fff;
+  background: #2b7a78;
+  font-family: Prototype, sans-serif;
+  font-weight: bold;
+  font-size: 10px;
+  line-height: 17px;
+  text-align: center;
+}
+
 .card-standard-project {
   height: 170px;
   width: 248px;
@@ -1160,4 +1223,13 @@ input[type="radio"]:checked+.filterDiv::after {
   .do-not-drag-and-drop {
     pointer-events: none;
   }
+}
+
+.card-resource-space-food,
+.card-resource-probiotics,
+.card-resource-ore,
+.space-food,
+.probiotics,
+.ore {
+  background-image: url("./assets/resources/wild.png");
 }

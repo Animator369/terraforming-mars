@@ -27,5 +27,10 @@
 	"Experimental UI": "Экспериментальный UI",
 	"Debug View": "Дебаг режим",
 	"Tutorial Mode (req. refresh)": "Обучение (треб. обновить)",
-	"Report a bug": "Сообщить о баге"
+	"Report a bug": "Сообщить о баге",
+	"Why?": "Почему?",
+	"Sort by:": "Сортировка по:",
+	"Cost": "Цена",
+	"Type": "Тип",
+	"Resource": "Ресурс"
 }

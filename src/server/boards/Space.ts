@@ -6,6 +6,8 @@ import {SpaceId} from '../../common/Types';
 import {IPlayer} from '../IPlayer';
 import {UndergroundResourceToken} from '../../common/underworld/UndergroundResourceToken';
 import {SpaceCube} from '../../common/boards/SpaceCube';
+import {CardName} from '../../common/cards/CardName';
+import {UpgradeType} from '../../common/postlude/PostludeTypes';
 
 export type Space = {
   /** The unique ID of this space*/
@@ -40,4 +42,12 @@ export type Space = {
 
   /** This tile's co-owner. Used for The Moon's Hostile Takeover card. */
   coOwner?: IPlayer;
+
+  /** Optional Postlude expansion upgrade tile */
+  upgradeTile?: {
+    cardId: CardName;
+    upgradeType: UpgradeType;
+    owner: IPlayer;
+    additionalPlacementBonus?: Array<SpaceBonus>;
+  };
 }

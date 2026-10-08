@@ -21,6 +21,8 @@ import {Phase} from '../common/Phase';
 import {PlayerInput} from './PlayerInput';
 import {Resource} from '../common/Resource';
 import {CardResource} from '../common/CardResource';
+import {PostludeExpansion} from './postlude/PostludeExpansion';
+import {Space} from './boards/Space';
 import {SelectCard} from './inputs/SelectCard';
 import {SellPatentsStandardProject} from './cards/base/standardProjects/SellPatentsStandardProject';
 import {SimpleDeferredAction} from './deferredActions/DeferredAction';
@@ -125,6 +127,10 @@ export class Player implements IPlayer {
   public actionsThisGeneration: Set<CardName> = new Set();
   public lastCardPlayed: CardName | undefined;
   public pendingInitialActions: Array<ICorporationCard> = [];
+  public postludePlacementConstraint?: {
+    spaces: ReadonlyArray<Space>;
+    label: string;
+  };
 
   // Cards
   public dealtCorporationCards: Array<ICorporationCard> = [];
@@ -418,7 +424,7 @@ export class Player implements IPlayer {
     }
 
     // The pathfindersExpansion test is just an optimization for non-Pathfinders games.
-    if (attacker !== this && this.playedCards.has(CardName.PRIVATE_SECURITY)) {
+    if (attacker !== this && (this.playedCards.has(CardName.PRIVATE_SECURITY) || this.playedCards.has(CardName.INSURANCE_HQ))) {
       return false;
     }
     return true;
@@ -440,10 +446,43 @@ export class Player implements IPlayer {
     const msg = message('Lose ${0} ${1}', (b) => b.number(count).string(resource));
     this.maybeBlockAttack(perpetrator, msg, (proceed) => {
       if (proceed) {
+        const actualDeducted = Math.min(this.stock[resource], count);
         if (options?.stealing) {
           this.stock.steal(resource, count, perpetrator, {log: options?.log});
         } else {
           this.stock.deduct(resource, count, {log: options?.log, from: {player: perpetrator}});
+        }
+
+        // Postlude Insurance HQ hook
+        if (this.playedCards.has(CardName.INSURANCE_HQ)) {
+          const hqSpace = PostludeExpansion.getSpaceForUpgrade(this.game, CardName.INSURANCE_HQ);
+          if (hqSpace !== undefined) {
+            const ownAdj = PostludeExpansion.ownAdjacentTiles(this.game.board, hqSpace, this);
+            const returned = Math.min(actualDeducted, ownAdj);
+            if (returned > 0) {
+              this.stock.add(resource, returned, {log: true});
+              this.game.log('${0} recovered ${1} ${2} from Insurance HQ', (b) =>
+                b.player(this).number(returned).string(resource),
+              );
+            }
+          }
+        }
+
+        // Postlude The Black Market hook
+        for (const p of this.game.players) {
+          if (p.playedCards.has(CardName.THE_BLACK_MARKET)) {
+            const bmSpace = PostludeExpansion.getSpaceForUpgrade(this.game, CardName.THE_BLACK_MARKET);
+            if (bmSpace !== undefined) {
+              const ownAdj = PostludeExpansion.ownAdjacentTiles(this.game.board, bmSpace, p);
+              const stolenAmount = Math.max(0, actualDeducted - ownAdj);
+              if (stolenAmount > 0) {
+                p.stock.add(resource, stolenAmount, {log: true});
+                this.game.log('${0} gained ${1} ${2} from The Black Market', (b) =>
+                  b.player(p).number(stolenAmount).string(resource),
+                );
+              }
+            }
+          }
         }
       }
       return undefined;
@@ -739,11 +778,19 @@ export class Player implements IPlayer {
   }
 
   private paymentOptionsForCard(card: IProjectCard): PaymentOptions {
+    const postludeOptions = PostludeExpansion.getPostludePaymentOptions(this, card);
+    const allowSteel = this.lastCardPlayed === CardName.LAST_RESORT_INGENUITY ||
+      card.tags.includes(Tag.BUILDING) ||
+      postludeOptions?.steel === true;
+    const allowTitanium = this.lastCardPlayed === CardName.LAST_RESORT_INGENUITY ||
+      card.tags.includes(Tag.SPACE) ||
+      postludeOptions?.titanium === true;
+
     return {
       heat: this.canUseHeatAsMegaCredits,
-      steel: this.lastCardPlayed === CardName.LAST_RESORT_INGENUITY || card.tags.includes(Tag.BUILDING),
+      steel: allowSteel,
       plants: card.tags.includes(Tag.BUILDING) && this.playedCards.has(CardName.MARTIAN_LUMBER_CORP),
-      titanium: this.lastCardPlayed === CardName.LAST_RESORT_INGENUITY || card.tags.includes(Tag.SPACE),
+      titanium: allowTitanium,
       lunaTradeFederationTitanium: this.canUseTitaniumAsMegacredits,
       seeds: card.tags.includes(Tag.PLANT) || card.name === CardName.GREENERY_STANDARD_PROJECT,
       floaters: card.tags.includes(Tag.VENUS),
@@ -789,6 +836,32 @@ export class Player implements IPlayer {
     if (totalToPay < cardCost) {
       throw new Error('Did not spend enough to pay for card');
     }
+
+    const postludeOptions = PostludeExpansion.getPostludePaymentOptions(this, selectedCard);
+    const steelFromUpgrade = payment.steel > 0 && !selectedCard.tags.includes(Tag.BUILDING) && this.lastCardPlayed !== CardName.LAST_RESORT_INGENUITY;
+    const titaniumFromUpgrade = payment.titanium > 0 && !selectedCard.tags.includes(Tag.SPACE) && this.lastCardPlayed !== CardName.LAST_RESORT_INGENUITY;
+
+    if (steelFromUpgrade && titaniumFromUpgrade) {
+      if (postludeOptions?.exclusiveSteelTitanium) {
+        throw new Error('Cannot pay with both Steel and Titanium: Machinery Factory and Metallurgy Workshop share no available adjacent spaces for this tile.');
+      } else if (postludeOptions?.commonSpaces) {
+        this.postludePlacementConstraint = {
+          spaces: postludeOptions.commonSpaces,
+          label: 'Machinery Factory & Metallurgy Workshop',
+        };
+      }
+    } else if (steelFromUpgrade && postludeOptions?.steelSpaces) {
+      this.postludePlacementConstraint = {
+        spaces: postludeOptions.steelSpaces,
+        label: 'Machinery Factory',
+      };
+    } else if (titaniumFromUpgrade && postludeOptions?.titaniumSpaces) {
+      this.postludePlacementConstraint = {
+        spaces: postludeOptions.titaniumSpaces,
+        label: 'Metallurgy Workshop',
+      };
+    }
+
     return this.playCard(selectedCard, payment, cardAction);
   }
 
@@ -1245,9 +1318,15 @@ export class Player implements IPlayer {
 
     const cost = this.getCardCost(card);
     const paymentOptionsForCard = this.paymentOptionsForCard(card);
+    const postludeOptions = PostludeExpansion.getPostludePaymentOptions(this, card);
+    const isExclusive = postludeOptions?.exclusiveSteelTitanium === true &&
+      !card.tags.includes(Tag.BUILDING) &&
+      !card.tags.includes(Tag.SPACE);
+
     return {
       cost,
       ...paymentOptionsForCard,
+      exclusiveSteelTitanium: isExclusive,
       reserveUnits: MoonExpansion.adjustedReserveCosts(this, card),
       tr: trSource,
     };
@@ -1389,7 +1468,14 @@ export class Player implements IPlayer {
       }
     }
 
-    const usable = this.payingAmount(maxPayable, options);
+    let usable = 0;
+    if (options.exclusiveSteelTitanium) {
+      const usableSteel = this.payingAmount(maxPayable, {...options, titanium: false});
+      const usableTitanium = this.payingAmount(maxPayable, {...options, steel: false});
+      usable = Math.max(usableSteel, usableTitanium);
+    } else {
+      usable = this.payingAmount(maxPayable, options);
+    }
 
     const canAfford = options.cost + redsCost <= usable;
     return {canAfford, redsCost};
@@ -1956,7 +2042,16 @@ export class Player implements IPlayer {
       return;
     }
     const cb = typeof(input) === 'function' ? input : () => input;
-    const action = new SimpleDeferredAction(this, cb, priority);
+    const wrappedCb = () => {
+      const res = cb();
+      if (this.postludePlacementConstraint !== undefined && res instanceof SelectSpace) {
+        const constrained = PostludeExpansion.applyPlacementConstraint(this, res.spaces, res.title);
+        res.spaces = constrained.spaces;
+        res.title = constrained.title;
+      }
+      return res;
+    };
+    const action = new SimpleDeferredAction(this, wrappedCb, priority);
     this.game.defer(action);
   }
 

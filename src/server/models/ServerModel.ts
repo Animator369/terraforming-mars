@@ -421,6 +421,15 @@ export class Server {
       if (space.coOwner !== undefined) {
         model.coOwner = space.coOwner.color;
       }
+      if (space.upgradeTile !== undefined) {
+        model.upgradeTile = {
+          cardId: space.upgradeTile.cardId,
+          upgradeType: space.upgradeTile.upgradeType,
+          ownerId: space.upgradeTile.owner.id,
+          color: space.upgradeTile.owner.color,
+          additionalPlacementBonus: space.upgradeTile.additionalPlacementBonus,
+        };
+      }
 
       return model;
     });
@@ -450,6 +459,7 @@ export class Server {
         starwars: options.starWarsExpansion,
         underworld: options.underworldExpansion,
         deltaProject: options.deltaProjectExpansion,
+        postlude: options.postludeExpansion,
       },
       fastModeOption: options.fastModeOption,
       includedCards: options.includedCards,

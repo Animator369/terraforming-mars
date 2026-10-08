@@ -5,6 +5,7 @@ import {CardRenderItemType} from '../../../src/common/cards/render/CardRenderIte
 import {Size} from '../../../src/common/cards/render/Size';
 import {AltSecondaryTag} from '../../../src/common/cards/render/AltSecondaryTag';
 import {CardResource} from '../../../src/common/CardResource';
+import {CardName} from '../../../src/common/cards/CardName';
 import {Tag} from '../../../src/common/cards/Tag';
 import {cast} from '../../../src/common/utils/utils';
 import {CardRenderSymbol} from '../../../src/server/cards/render/CardRenderSymbol';
@@ -359,5 +360,56 @@ describe('CardRenderer', () => {
   });
   it('negative digit: explicit minus throws', () => {
     expect(() => CardRenderer.builder((b) => b.minus().plants(-1))).to.throw(/already has a minus symbol/);
+  });
+
+  describe('postlude tiles', () => {
+    it('cityUpgrade', () => {
+      const renderer = CardRenderer.builder((b) => b.cityUpgrade());
+      const item = cast(renderer.rows[0][0], CardRenderItem);
+      expect(item.type).to.equal(CardRenderItemType.CITY_UPGRADE);
+      expect(item.size).to.equal(Size.MEDIUM);
+    });
+
+    it('greeneryUpgrade', () => {
+      const renderer = CardRenderer.builder((b) => b.greeneryUpgrade());
+      const item = cast(renderer.rows[0][0], CardRenderItem);
+      expect(item.type).to.equal(CardRenderItemType.GREENERY_UPGRADE);
+      expect(item.secondaryTag).to.equal(AltSecondaryTag.OXYGEN);
+    });
+
+    it('oceanUpgrade', () => {
+      const renderer = CardRenderer.builder((b) => b.oceanUpgrade());
+      const item = cast(renderer.rows[0][0], CardRenderItem);
+      expect(item.type).to.equal(CardRenderItemType.OCEAN_UPGRADE);
+    });
+
+    it('oceanTile', () => {
+      const renderer = CardRenderer.builder((b) => b.oceanTile());
+      const item = cast(renderer.rows[0][0], CardRenderItem);
+      expect(item.type).to.equal(CardRenderItemType.OCEAN_TILE);
+    });
+
+    it('postludeTile with card artwork', () => {
+      const renderer = CardRenderer.builder((b) => b.postludeTile(CardName.AMUSEMENT_PARK));
+      const item = cast(renderer.rows[0][0], CardRenderItem);
+      expect(item.type).to.equal(CardRenderItemType.POSTLUDE_TILE);
+      expect(item.postludeCard).to.equal(CardName.AMUSEMENT_PARK);
+    });
+
+    it('postludeUpgrade delegating properly', () => {
+      const city = CardRenderer.builder((b) => b.postludeUpgrade('CITY_UPGRADE'));
+      expect(cast(city.rows[0][0], CardRenderItem).type).to.equal(CardRenderItemType.CITY_UPGRADE);
+
+      const greenery = CardRenderer.builder((b) => b.postludeUpgrade('GREENERY_UPGRADE'));
+      expect(cast(greenery.rows[0][0], CardRenderItem).type).to.equal(CardRenderItemType.GREENERY_UPGRADE);
+
+      const ocean = CardRenderer.builder((b) => b.postludeUpgrade('OCEAN_UPGRADE'));
+      expect(cast(ocean.rows[0][0], CardRenderItem).type).to.equal(CardRenderItemType.OCEAN_UPGRADE);
+
+      const card = CardRenderer.builder((b) => b.postludeUpgrade(CardName.FLOATING_METROPOLIS));
+      const cardItem = cast(card.rows[0][0], CardRenderItem);
+      expect(cardItem.type).to.equal(CardRenderItemType.POSTLUDE_TILE);
+      expect(cardItem.postludeCard).to.equal(CardName.FLOATING_METROPOLIS);
+    });
   });
 });

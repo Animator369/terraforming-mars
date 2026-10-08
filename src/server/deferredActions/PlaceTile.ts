@@ -7,6 +7,7 @@ import {PlacementType} from '../boards/PlacementType';
 import {Tile} from '../Tile';
 import {AdjacencyBonus} from '../ares/AdjacencyBonus';
 import {Message} from '../../common/logs/Message';
+import {PostludeExpansion} from '../postlude/PostludeExpansion';
 
 export class PlaceTile extends DeferredAction<Space> {
   constructor(
@@ -23,13 +24,13 @@ export class PlaceTile extends DeferredAction<Space> {
   public execute() {
     const game = this.player.game;
     const on = this.options.on;
-    const availableSpaces =
+    const rawSpaces =
       typeof on === 'string' ?
         game.board.getAvailableSpacesForType(this.player, on) :
         on();
-    const title = this.options?.title;
+    const {spaces, title} = PostludeExpansion.applyPlacementConstraint(this.player, rawSpaces, this.options?.title);
 
-    return new SelectSpace(title, availableSpaces)
+    return new SelectSpace(title, spaces)
       .andThen((space: Space) => {
         const tile: Tile = {...this.options.tile};
         if (this.options.on === 'upgradeable-ocean' || this.options.on === 'upgradeable-ocean-new-holland') {

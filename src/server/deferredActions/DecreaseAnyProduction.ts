@@ -6,6 +6,9 @@ import {Priority} from './Priority';
 import {Message} from '../../common/logs/Message';
 import {message} from '../logs/MessageBuilder';
 
+import {CardName} from '../../common/cards/CardName';
+import {PostludeExpansion} from '../postlude/PostludeExpansion';
+
 export type Options = {
   count: number,
   stealing?: boolean
@@ -29,6 +32,23 @@ export class DecreaseAnyProduction extends DeferredAction<boolean> {
     target.maybeBlockAttack(this.player, msg, (proceed: boolean) => {
       if (proceed) {
         target.production.add(this.resource, -this.options.count, {log: true, from: {player: this.player}, stealing: this.options.stealing});
+
+        // Postlude The Black Market hook
+        for (const p of this.player.game.players) {
+          if (p.playedCards.has(CardName.THE_BLACK_MARKET)) {
+            const bmSpace = PostludeExpansion.getSpaceForUpgrade(this.player.game, CardName.THE_BLACK_MARKET);
+            if (bmSpace !== undefined) {
+              const ownAdj = PostludeExpansion.ownAdjacentTiles(this.player.game.board, bmSpace, p);
+              const gainedProd = Math.max(0, this.options.count - ownAdj);
+              if (gainedProd > 0) {
+                p.production.add(this.resource, gainedProd, {log: true});
+                this.player.game.log('${0} gained ${1} ${2} production from The Black Market', (b) =>
+                  b.player(p).number(gainedProd).string(this.resource),
+                );
+              }
+            }
+          }
+        }
       }
       this.cb(proceed);
       return undefined;

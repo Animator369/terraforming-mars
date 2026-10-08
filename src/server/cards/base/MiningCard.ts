@@ -12,6 +12,7 @@ import {Tag} from '../../../common/cards/Tag';
 import {SpaceBonus} from '../../../common/boards/SpaceBonus';
 import {TileType} from '../../../common/TileType';
 import {SelectResourceTypeDeferred} from '../../deferredActions/SelectResourceTypeDeferred';
+import {PostludeExpansion} from '../../postlude/PostludeExpansion';
 
 export abstract class MiningCard extends Card implements IProjectCard {
   public bonusResource: Array<Resource> | undefined;
@@ -63,7 +64,9 @@ export abstract class MiningCard extends Card implements IProjectCard {
   }
 
   public override bespokePlay(player: IPlayer): SelectSpace {
-    return new SelectSpace(this.title, this.getAvailableSpaces(player))
+    const rawSpaces = this.getAvailableSpaces(player);
+    const {spaces, title} = PostludeExpansion.applyPlacementConstraint(player, rawSpaces, this.title);
+    return new SelectSpace(title, spaces)
       .andThen((space) => {
         this.spaceSelected(player, space);
         return undefined;

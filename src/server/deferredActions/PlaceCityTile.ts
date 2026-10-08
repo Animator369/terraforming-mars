@@ -5,6 +5,7 @@ import {DeferredAction} from './DeferredAction';
 import {Priority} from './Priority';
 import {PlacementType} from '../boards/PlacementType';
 import {Message} from '../../common/logs/Message';
+import {PostludeExpansion} from '../postlude/PostludeExpansion';
 
 export class PlaceCityTile extends DeferredAction<Space | undefined> {
   constructor(
@@ -19,8 +20,9 @@ export class PlaceCityTile extends DeferredAction<Space | undefined> {
 
   public execute() {
     const type = this.options?.on || 'city';
-    const spaces = this.options?.spaces || this.player.game.board.getAvailableSpacesForType(this.player, type);
-    const title = this.options?.title ?? this.getTitle(type);
+    const rawSpaces = this.options?.spaces || this.player.game.board.getAvailableSpacesForType(this.player, type);
+    const rawTitle = this.options?.title ?? this.getTitle(type);
+    const {spaces, title} = PostludeExpansion.applyPlacementConstraint(this.player, rawSpaces, rawTitle);
 
     if (spaces.length === 0) {
       this.cb(undefined);
