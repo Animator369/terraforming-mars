@@ -1,6 +1,8 @@
 .create-game-player {
-  padding: 25px;
-  margin: 10px 0px 10px 15px
+  padding: 20px;
+  margin: 10px 0 10px 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .create-game--block {
@@ -57,6 +59,145 @@
   color: gray;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+.create-game-presets-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  border: 1px solid #2a2a2a;
+}
+
+.create-game-presets-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: #aaa;
+}
+
+.create-game-presets-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.create-game-preset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #222;
+  border: 1px solid #444;
+  color: #ddd;
+  font-size: 15px;
+  font-family: Ubuntu, sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #333;
+    border-color: #666;
+    color: #fff;
+  }
+
+  &.active {
+    background: #ffcc64;
+    border-color: #ffcc64;
+    color: #111;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 204, 100, 0.35);
+  }
+
+  .preset-icon {
+    font-size: 16px;
+  }
+}
+
+.create-game-player-count-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid #2a2a2a;
+
+  .create-game-player-count-header h4 {
+    margin: 0;
+    font-size: 20px;
+    color: #ccc;
+  }
+
+  .create-game-player-count-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .player-count-item {
+      input[type="radio"] {
+        opacity: 0;
+        position: fixed;
+        width: 0;
+      }
+
+      .player-count-pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 80px;
+        height: 44px;
+        padding: 0 16px;
+        font-size: 18px;
+        font-weight: 600;
+        border-radius: 22px;
+        background: @grey_850;
+        color: #ccc;
+        cursor: pointer;
+        margin: 0;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #555;
+          color: #fff;
+        }
+
+        &.active {
+          background: #ffcc64;
+          color: #111;
+          font-weight: bold;
+          box-shadow: 0 0 8px rgba(255, 204, 100, 0.35);
+        }
+      }
+
+      input[type="radio"]:checked + .player-count-pill {
+        background: #ffcc64;
+        color: #111;
+        font-weight: bold;
+        box-shadow: 0 0 8px rgba(255, 204, 100, 0.35);
+      }
+    }
+  }
+}
+
+.create-game-live-summary-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  margin: 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffcc64;
+  background: rgba(255, 204, 100, 0.1);
+  border: 1px solid rgba(255, 204, 100, 0.3);
+  border-radius: 16px;
+  white-space: nowrap;
 }
 
 .create-game-page-container {
@@ -239,7 +380,8 @@
 
 
 .create-game-page-color-row input[type="radio"]:checked + label {
-  background-color: rgba(0,0,0,.3);
+  background-color: rgba(255, 255, 255, 0.2);
+  outline: 2px solid #ffcc64;
 }
 
 .create-game-page-column input[type="radio"]:checked + label.label-randomMAOption {
@@ -285,12 +427,13 @@
 }
 
 .create-game-colorbox {
-  width: 24px;
-  height: 24px;
-  border-radius: 5px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
   display: inline-block;
   text-align: center;
-  vertical-align: text-top;
+  vertical-align: middle;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .create-game-beginner-option-label {
