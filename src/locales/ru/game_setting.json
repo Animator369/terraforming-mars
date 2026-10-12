@@ -31,5 +31,14 @@
 	"timer": "таймер",
 	"real-time vp": "ПО в реальном времени",
 	"fast mode": "быстрый режим",
-	"Banned cards:": "Исключённые карты:"
+	"Banned cards:": "Исключённые карты:",
+	"Quick Presets": "Быстрые пресеты",
+	"Standard Competitive": "Стандартный турнирный",
+	"All Official": "Все официальные",
+	"Classic Base": "Классическая база",
+	"Solo Challenge": "Соло-испытание",
+	"All-In (Fan)": "Всё включено (Фанатские)",
+	"Rules & Variants": "Правила и варианты",
+	"Starting Setup & Filters": "Стартовая раскладка и фильтры"
 }
+
