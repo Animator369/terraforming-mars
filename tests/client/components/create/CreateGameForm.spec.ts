@@ -224,4 +224,28 @@ describe('CreateGameForm', () => {
       penaltyVPPerPeriod: 1,
     });
   });
+
+  it('applies a preset when requested from CreateGameForm', async () => {
+    const wrapper = shallowMount(CreateGameForm, {
+      ...globalConfig,
+    });
+    (wrapper.vm as any).selectPreset('standard');
+    await wrapper.vm.$nextTick();
+    expect((wrapper.vm as any).expansions.prelude).to.be.true;
+    expect((wrapper.vm as any).draftVariant).to.be.true;
+    expect((wrapper.vm as any).activePreset).to.eq('standard');
+  });
+
+  it('maintains player slot bindings and color selection', async () => {
+    const wrapper = shallowMount(CreateGameForm, {
+      ...globalConfig,
+    });
+    (wrapper.vm as any).playersCount = 3;
+    (wrapper.vm as any).players[1].color = 'yellow';
+    (wrapper.vm as any).players[1].name = 'Player Two';
+    await wrapper.vm.$nextTick();
+    expect((wrapper.vm as any).getPlayers()[1].color).to.eq('yellow');
+    expect((wrapper.vm as any).getPlayers()[1].name).to.eq('Player Two');
+  });
 });
+

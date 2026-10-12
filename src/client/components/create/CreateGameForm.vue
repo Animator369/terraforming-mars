@@ -4,17 +4,39 @@
             <div class="create-game-form create-game-panel create-game--block">
 
                 <div class="create-game-options">
-                    <div class="create-game-page-container">
-                        <div class="create-game-page-column">
+                    <div class="create-game-presets-row">
+                        <div class="create-game-presets-header">
+                            <span class="create-game-presets-title" v-i18n>Quick Presets</span>
+                        </div>
+                        <div class="create-game-presets-pills">
+                            <button
+                                type="button"
+                                v-for="preset in presets"
+                                :key="preset.id"
+                                :class="['create-game-preset-btn', {active: activePreset === preset.id}]"
+                                :title="preset.description"
+                                @click="selectPreset(preset.id)">
+                                <span class="preset-icon">{{ preset.icon }}</span>
+                                <span class="preset-label" v-i18n>{{ preset.label }}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="create-game-player-count-bar">
+                        <div class="create-game-player-count-header">
                             <h4 v-i18n>№ of Players</h4>
-                            <div v-for="pCount in [1,2,3,4,5,6]" :key="pCount">
+                        </div>
+                        <div class="create-game-player-count-group">
+                            <div v-for="pCount in [1,2,3,4,5,6]" :key="pCount" class="player-count-item">
                               <input type="radio" :value="pCount" name="playersCount" v-model="playersCount" :id="pCount+'-radio'">
-                              <label :for="pCount+'-radio'">
+                              <label :for="pCount+'-radio'" class="player-count-pill" :class="{active: playersCount === pCount}">
                                   {{ getPlayersCountText(pCount) }}
                               </label>
                             </div>
                         </div>
+                    </div>
 
+                    <div class="create-game-page-container">
                         <div class="create-game-page-column">
                             <h4 v-i18n>Expansions</h4>
 
@@ -195,27 +217,100 @@
                         </div>
 
                         <div class="create-game-page-column">
-                            <h4 v-i18n>Options</h4>
+                            <h4 v-i18n>Rules & Variants</h4>
 
-                            <label for="startingCorpNum-checkbox">
-                            <input type="number" class="create-game-corporations-count" value="2" min="1" :max="6" v-model="startingCorporations" id="startingCorpNum-checkbox">
-                                <span v-i18n>Starting Corporations</span>
-                            </label>
+                            <template v-if="playersCount > 1">
+                                <div class="create-game-page-column-row">
+                                    <div>
+                                    <input type="checkbox" name="draftVariant" v-model="draftVariant" id="draft-checkbox">
+                                    <label for="draft-checkbox">
+                                        <span v-i18n>Draft variant</span>
+                                    </label>
+                                    </div>
 
-                            <template v-if="expansions.prelude">
-                              <label for="startingPreludeENum-checkbox">
-                              <div class="create-game-expansion-icon expansion-icon-prelude"></div>
-                              <input type="number" class="create-game-corporations-count" value="4" min="4" :max="8" v-model="startingPreludes" id="startingPreludeNum-checkbox">
-                                  <span v-i18n>Starting Preludes</span>
-                              </label>
-                            </template>
+                                    <div>
+                                    <input type="checkbox" name="initialDraft" v-model="initialDraft" id="initialDraft-checkbox">
+                                    <label for="initialDraft-checkbox">
+                                        <span v-i18n>Initial Draft variant</span>&nbsp;<a :href="wikiUrls.initialDraft" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
+                                    </label>
+                                    </div>
+                                </div>
+                                <div class="create-game-page-column-row" v-if="initialDraft">
+                                  <div v-if="expansions.prelude">
+                                    <input type="checkbox" name="preludeDraft" v-model="preludeDraftVariant" id="preludeDraft-checkbox">
+                                    <label for="preludeDraft-checkbox">
+                                      <span v-i18n>Prelude Draft</span>
+                                    </label>
+                                  </div>
 
-                            <template v-if="expansions.ceo">
-                              <label for="startingCEONum-checkbox">
-                              <div class="create-game-expansion-icon expansion-icon-ceo"></div>
-                              <input type="number" class="create-game-corporations-count" value="3" min="1" :max="6" v-model="startingCeos" id="startingCEONum-checkbox">
-                                  <span v-i18n>Starting CEOs</span>
-                              </label>
+                                  <div v-if="expansions.ceo">
+                                    <input type="checkbox" name="ceosDraft" v-model="ceosDraftVariant" id="ceosDraft-checkbox">
+                                    <label for="ceosDraft-checkbox">
+                                      <span v-i18n>CEO Draft</span>
+                                    </label>
+                                  </div>
+                                </div>
+
+                                <input type="checkbox" v-model="randomFirstPlayer" id="randomFirstPlayer-checkbox">
+                                <label for="randomFirstPlayer-checkbox">
+                                    <span v-i18n>Random first player</span>
+                                </label>
+
+                                <input type="checkbox" name="randomMAToggle" id="randomMA-checkbox" @change="randomMAToggle()">
+                                <label for="randomMA-checkbox">
+                                    <span v-i18n>Random Milestones/Awards</span>&nbsp;<a :href="wikiUrls.randomMilestonesAndAwards" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
+                                </label>
+
+                                <div class="create-game-page-column-row" v-if="isRandomMAEnabled()">
+                                    <div>
+                                    <input type="radio" name="randomMAOption" v-model="randomMA" :value="getRandomMaOptionType('limited')" id="limitedRandomMA-radio">
+                                    <label class="label-randomMAOption" for="limitedRandomMA-radio">
+                                        <span v-i18n>{{ getRandomMaOptionType('limited') }}</span>
+                                    </label>
+                                    </div>
+
+                                    <div>
+                                    <input type="radio" name="randomMAOption" v-model="randomMA" :value="getRandomMaOptionType('full')" id="unlimitedRandomMA-radio">
+                                    <label class="label-randomMAOption" for="unlimitedRandomMA-radio">
+                                        <span v-i18n>{{ getRandomMaOptionType('full') }}</span>
+                                    </label>
+                                    </div>
+                                    <div>
+                                      <input type="checkbox" name="modularMA" v-model="modularMA" id="modularMA-checkbox">
+                                       <label for="modularMA-checkbox">
+                                        <span v-i18n>Official Random α</span>
+                                      </label>
+                                    </div>
+                                </div>
+
+                                <div v-if="modularMA">
+                                  The new Milestones and Awards are still in active development.<br>
+                                  Please don't report anything unless it breaks the game.<br>
+                                  These are <b>always fully random</b>.
+                                </div>
+                                <template v-if="expansions.venus">
+                                    <input type="checkbox" v-model="requiresVenusTrackCompletion" id="requiresVenusTrackCompletion-checkbox">
+                                    <label for="requiresVenusTrackCompletion-checkbox">
+                                        <span v-i18n>Mandatory Venus Terraforming</span> &nbsp;<a :href="wikiUrls.venusTerraforming" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
+                                    </label>
+                                </template>
+
+                                <template v-if="randomMA !== RandomMAOptionType.NONE">
+                                  <input type="checkbox" v-model="includeFanMA" id="fanMA-checkbox">
+                                  <label for="fanMA-checkbox">
+                                      <span v-i18n>Include fan Milestones/Awards</span>
+                                  </label>
+                                </template>
+
+                                <input type="checkbox" name="showOtherPlayersVP" v-model="showOtherPlayersVP" id="realTimeVP-checkbox">
+                                <label for="realTimeVP-checkbox">
+                                    <span v-i18n>Show real-time VP</span>&nbsp;<a :href="wikiUrls.showRealtimeVP" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
+                                </label>
+
+                                <input type="checkbox" v-model="fastModeOption" id="fastMode-checkbox">
+                                <label for="fastMode-checkbox">
+                                    <span v-i18n>Fast mode</span>&nbsp;<a :href="wikiUrls.fastMode" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
+                                </label>
                             </template>
 
                             <input type="checkbox" v-model="solarPhaseOption" id="WGT-checkbox">
@@ -230,11 +325,6 @@
                             </label>
                             </template>
 
-                            <!-- <input type="checkbox" v-model="beginnerOption" id="beginnerOption-checkbox">
-                            <label for="beginnerOption-checkbox">
-                                <span v-i18n>Beginner Options</span>
-                            </label> -->
-
                             <input type="checkbox" v-model="undoOption" id="undo-checkbox">
                             <label for="undo-checkbox">
                                 <span v-i18n>Allow undo</span>&nbsp;<a :href="wikiUrls.allowUndo" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
@@ -245,9 +335,23 @@
                               <br>
                               <span v-i18n>No effort will be spent to fix it.</span>
                             </div>
+
                             <input type="checkbox" v-model="showTimers" id="timer-checkbox">
                             <label for="timer-checkbox">
                                 <span v-i18n>Show timers</span>
+                            </label>
+
+                            <template v-if="expansions.prelude">
+                              <input type="checkbox" v-model="twoCorpsVariant" id="twoCorps-checkbox">
+                              <label for="twoCorps-checkbox" title="Always gain the Merger Prelude card (will be given post-draft)">
+                                    <div class="create-game-expansion-icon expansion-icon-prelude"></div>
+                                    <span v-i18n>Merger</span>&nbsp;<a :href="wikiUrls.merger" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
+                              </label>
+                            </template>
+
+                            <input type="checkbox" v-model="shuffleMapOption" id="shuffleMap-checkbox">
+                            <label for="shuffleMap-checkbox">
+                                    <span v-i18n>Randomize board tiles</span>&nbsp;<a :href="wikiUrls.randomizeBoardTiles" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
                             </label>
 
                             <input type="checkbox" v-model="escapeVelocityMode" id="escapevelocity-checkbox">
@@ -276,19 +380,6 @@
                               <span v-i18n>min</span>
                             </label>
 
-                            <template v-if="expansions.prelude">
-                              <input type="checkbox" v-model="twoCorpsVariant" id="twoCorps-checkbox">
-                              <label for="twoCorps-checkbox" title="Always gain the Merger Prelude card (will be given post-draft)">
-                                    <div class="create-game-expansion-icon expansion-icon-prelude"></div>
-                                    <span v-i18n>Merger</span>&nbsp;<a :href="wikiUrls.merger" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
-                              </label>
-                            </template>
-
-                            <input type="checkbox" v-model="shuffleMapOption" id="shuffleMap-checkbox">
-                            <label for="shuffleMap-checkbox">
-                                    <span v-i18n>Randomize board tiles</span>&nbsp;<a :href="wikiUrls.randomizeBoardTiles" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
-                            </label>
-
                             <input type="checkbox" v-model="seededGame" id="seeded-checkbox">
                             <label for="seeded-checkbox">
                                 <span v-i18n>Set Predefined Game</span>&nbsp;<a :href="wikiUrls.setPredefinedGame" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
@@ -297,6 +388,31 @@
                             <div v-if="seededGame">
                                 <input type="text" name="clonedGamedId" v-model="clonedGameId" >
                             </div>
+                        </div>
+
+                        <div class="create-game-page-column">
+                            <h4 v-i18n>Starting Setup & Filters</h4>
+
+                            <label for="startingCorpNum-checkbox">
+                            <input type="number" class="create-game-corporations-count" value="2" min="1" :max="6" v-model="startingCorporations" id="startingCorpNum-checkbox">
+                                <span v-i18n>Starting Corporations</span>
+                            </label>
+
+                            <template v-if="expansions.prelude">
+                              <label for="startingPreludeENum-checkbox">
+                              <div class="create-game-expansion-icon expansion-icon-prelude"></div>
+                              <input type="number" class="create-game-corporations-count" value="4" min="4" :max="8" v-model="startingPreludes" id="startingPreludeNum-checkbox">
+                                  <span v-i18n>Starting Preludes</span>
+                              </label>
+                            </template>
+
+                            <template v-if="expansions.ceo">
+                              <label for="startingCEONum-checkbox">
+                              <div class="create-game-expansion-icon expansion-icon-ceo"></div>
+                              <input type="number" class="create-game-corporations-count" value="3" min="1" :max="6" v-model="startingCeos" id="startingCEONum-checkbox">
+                                  <span v-i18n>Starting CEOs</span>
+                              </label>
+                            </template>
 
                             <div class="create-game-subsection-label" v-i18n>Filter</div>
 
@@ -346,103 +462,6 @@
                                     <span v-i18n>Remove negative Global Events</span>&nbsp;<a :href="wikiUrls.removeNegativeGlobalEvents" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
                                 </label>
                             </template>
-
-                        </div>
-
-                        <div class="create-game-page-column" v-if="playersCount > 1">
-                            <h4 v-i18n>Multiplayer Options</h4>
-
-                            <div class="create-game-page-column-row">
-                                <div>
-                                <input type="checkbox" name="draftVariant" v-model="draftVariant" id="draft-checkbox">
-                                <label for="draft-checkbox">
-                                    <span v-i18n>Draft variant</span>
-                                </label>
-                                </div>
-
-                                <div>
-                                <input type="checkbox" name="initialDraft" v-model="initialDraft" id="initialDraft-checkbox">
-                                <label for="initialDraft-checkbox">
-                                    <span v-i18n>Initial Draft variant</span>&nbsp;<a :href="wikiUrls.initialDraft" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
-                                </label>
-                                </div>
-                            </div>
-                            <div class="create-game-page-column-row" v-if="initialDraft">
-                              <div v-if="expansions.prelude">
-                                <input type="checkbox" name="preludeDraft" v-model="preludeDraftVariant" id="preludeDraft-checkbox">
-                                <label for="preludeDraft-checkbox">
-                                  <span v-i18n>Prelude Draft</span>
-                                </label>
-                              </div>
-
-                              <div v-if="expansions.ceo">
-                                <input type="checkbox" name="ceosDraft" v-model="ceosDraftVariant" id="ceosDraft-checkbox">
-                                <label for="ceosDraft-checkbox">
-                                  <span v-i18n>CEO Draft</span>
-                                </label>
-                              </div>
-                            </div>
-
-                            <input type="checkbox" v-model="randomFirstPlayer" id="randomFirstPlayer-checkbox">
-                            <label for="randomFirstPlayer-checkbox">
-                                <span v-i18n>Random first player</span>
-                            </label>
-
-                            <input type="checkbox" name="randomMAToggle" id="randomMA-checkbox" @change="randomMAToggle()">
-                            <label for="randomMA-checkbox">
-                                <span v-i18n>Random Milestones/Awards</span>&nbsp;<a :href="wikiUrls.randomMilestonesAndAwards" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
-                            </label>
-
-                            <div class="create-game-page-column-row" v-if="isRandomMAEnabled()">
-                                <div>
-                                <input type="radio" name="randomMAOption" v-model="randomMA" :value="getRandomMaOptionType('limited')" id="limitedRandomMA-radio">
-                                <label class="label-randomMAOption" for="limitedRandomMA-radio">
-                                    <span v-i18n>{{ getRandomMaOptionType('limited') }}</span>
-                                </label>
-                                </div>
-
-                                <div>
-                                <input type="radio" name="randomMAOption" v-model="randomMA" :value="getRandomMaOptionType('full')" id="unlimitedRandomMA-radio">
-                                <label class="label-randomMAOption" for="unlimitedRandomMA-radio">
-                                    <span v-i18n>{{ getRandomMaOptionType('full') }}</span>
-                                </label>
-                                </div>
-                                <div>
-                                  <input type="checkbox" name="modularMA" v-model="modularMA" id="modularMA-checkbox">
-                                   <label for="modularMA-checkbox">
-                                    <span v-i18n>Official Random α</span>
-                                  </label>
-                                </div>
-                            </div>
-
-                            <div v-if="modularMA">
-                              The new Milestones and Awards are still in active development.<br>
-                              Please don't report anything unless it breaks the game.<br>
-                              These are <b>always fully random</b>.
-                            </div>
-                            <template v-if="expansions.venus">
-                                <input type="checkbox" v-model="requiresVenusTrackCompletion" id="requiresVenusTrackCompletion-checkbox">
-                                <label for="requiresVenusTrackCompletion-checkbox">
-                                    <span v-i18n>Mandatory Venus Terraforming</span> &nbsp;<a :href="wikiUrls.venusTerraforming" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
-                                </label>
-                            </template>
-
-                            <template v-if="randomMA !== RandomMAOptionType.NONE">
-                              <input type="checkbox" v-model="includeFanMA" id="fanMA-checkbox">
-                              <label for="fanMA-checkbox">
-                                  <span v-i18n>Include fan Milestones/Awards</span>
-                              </label>
-                            </template>
-
-                            <input type="checkbox" name="showOtherPlayersVP" v-model="showOtherPlayersVP" id="realTimeVP-checkbox">
-                            <label for="realTimeVP-checkbox">
-                                <span v-i18n>Show real-time VP</span>&nbsp;<a :href="wikiUrls.showRealtimeVP" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
-                            </label>
-
-                            <input type="checkbox" v-model="fastModeOption" id="fastMode-checkbox">
-                            <label for="fastMode-checkbox">
-                                <span v-i18n>Fast mode</span>&nbsp;<a :href="wikiUrls.fastMode" class="tooltip" v-i18n data-tooltip="Link opens in a new tab/window" target="_blank">&#9432;</a>
-                            </label>
                         </div>
 
                         <div class="create-game-players-cont">
@@ -496,16 +515,19 @@
 
                 <div class="create-game-action-row">
                     <div class="create-game-action">
-                        <label>
+                        <label title="Upload settings">
                             <div class="btn btn-primary btn-action btn-lg"><i class="icon icon-upload"></i></div>
                             <input style="display: none" type="file" accept=".json" id="settings-file" ref="file" @change="uploadSettings()">
                         </label>
 
-                        <label>
+                        <label title="Download settings">
                             <div @click="downloadSettings()" class="btn btn-primary btn-action btn-lg"><i class="icon icon-download"></i></div>
                         </label>
 
                         <AppButton class="create-game-action-gap" title="Reset" size="big" @click="resetSettings"/>
+                        <div class="create-game-live-summary-badge" v-if="liveSummary">
+                            {{ liveSummary }}
+                        </div>
                         <AppButton class="create-game-action-gap" title="Create game" size="big" @click="createGame" :disabled="hasBlockingValidationErrors"/>
                         <span v-if="hasBlockingValidationErrors" class="create-game-custom-preludes-warning create-game-validation-blocker" @click="showValidationErrors = true">&#9888;&#xFE0E;</span>
                         <span v-else-if="hasValidationProblems" class="create-game-validation-warning" @click="showValidationErrors = true">&#9888;&#xFE0F;</span>
@@ -615,6 +637,7 @@ import {setDocumentTitle} from '@/client/utils/documentTitle';
 import {sanitizeEscapeVelocityOptions} from '@/common/game/escapeVelocity';
 import {validateNewGameConfig, validationDetails, ValidationErrors} from '@/common/game/validateNewGameConfig';
 import ValidationErrorsPopup from './ValidationErrorsPopup.vue';
+import {applyGamePreset, GAME_PRESETS, GamePreset, GamePresetId} from './presets';
 
 const createGameSettingsStorage = new CreateGameSettingsStorage();
 
@@ -629,6 +652,7 @@ type FormModel = {
   preludeToggled: boolean;
   uploading: boolean;
   previousViewport: string;
+  activePreset: GamePresetId | undefined;
 };
 
 export default defineComponent({
@@ -640,6 +664,7 @@ export default defineComponent({
       preludeToggled: false,
       uploading: false,
       previousViewport: '',
+      activePreset: undefined,
     };
   },
   components: {
@@ -825,8 +850,23 @@ export default defineComponent({
         RandomBoardOption.ALL,
       ];
     },
+    presets(): Array<GamePreset> {
+      return GAME_PRESETS;
+    },
+    liveSummary(): string {
+      const playersPart = this.playersCount === 1 ? translateText('Solo') : `${this.playersCount} ${translateText('Players')}`;
+      const boardPart = translateText(this.board);
+      const expCount = Object.values(this.expansions).filter(Boolean).length;
+      const expPart = `${expCount} ${translateText('Expansions')}`;
+      const draftPart = this.playersCount > 1 && this.draftVariant ? translateText('Draft') : '';
+      return [playersPart, boardPart, expPart, draftPart].filter(Boolean).join(' • ');
+    },
   },
   methods: {
+    selectPreset(presetId: GamePresetId) {
+      applyGamePreset(this, presetId);
+      this.activePreset = presetId;
+    },
     restoreLastSettings() {
       const settings = createGameSettingsStorage.loadSettings();
       if (settings === undefined) {
@@ -884,6 +924,7 @@ export default defineComponent({
       Object.assign(this, defaultCreateGameModel(), {
         preludeToggled: false,
         uploading: false,
+        activePreset: undefined,
       });
       nextTick(() => {
         const refs = this.typedRefs;
