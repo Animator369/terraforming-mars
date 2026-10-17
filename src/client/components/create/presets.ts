@@ -45,143 +45,143 @@ export const GAME_PRESETS: Array<GamePreset> = [
 
 export function applyGamePreset(model: CreateGameModel, presetId: GamePresetId): void {
   switch (presetId) {
-    case 'standard': {
-      if (model.playersCount === 1) {
-        model.playersCount = 3;
-      }
-      model.allOfficialExpansions = false;
-      model.expansions.corpera = true;
-      model.expansions.prelude = true;
-      model.expansions.prelude2 = false;
-      model.expansions.venus = false;
-      model.expansions.colonies = false;
-      model.expansions.turmoil = false;
-      model.expansions.promo = false;
-      model.expansions.community = false;
-      model.expansions.ares = false;
-      model.expansions.moon = false;
-      model.expansions.pathfinders = false;
-      model.expansions.ceo = false;
-      model.expansions.starwars = false;
-      model.expansions.underworld = false;
-      model.expansions.deltaProject = false;
-      model.expansions.postlude = false;
-
-      model.draftVariant = true;
-      model.showOtherPlayersVP = true;
-      model.randomFirstPlayer = true;
-      model.solarPhaseOption = false;
-      model.soloTR = false;
-      break;
+  case 'standard': {
+    if (model.playersCount === 1) {
+      model.playersCount = 3;
     }
-    case 'all_official': {
-      if (model.playersCount === 1) {
-        model.playersCount = 3;
-      }
-      model.allOfficialExpansions = true;
-      model.expansions.corpera = true;
-      model.expansions.prelude = true;
-      model.expansions.prelude2 = true;
-      model.expansions.venus = true;
-      model.expansions.colonies = true;
-      model.expansions.turmoil = true;
-      model.expansions.promo = true;
+    model.allOfficialExpansions = false;
+    model.expansions.corpera = true;
+    model.expansions.prelude = true;
+    model.expansions.prelude2 = false;
+    model.expansions.venus = false;
+    model.expansions.colonies = false;
+    model.expansions.turmoil = false;
+    model.expansions.promo = false;
+    model.expansions.community = false;
+    model.expansions.ares = false;
+    model.expansions.moon = false;
+    model.expansions.pathfinders = false;
+    model.expansions.ceo = false;
+    model.expansions.starwars = false;
+    model.expansions.underworld = false;
+    model.expansions.deltaProject = false;
+    model.expansions.postlude = false;
 
-      model.expansions.community = false;
-      model.expansions.ares = false;
-      model.expansions.moon = false;
-      model.expansions.pathfinders = false;
-      model.expansions.ceo = false;
-      model.expansions.starwars = false;
-      model.expansions.underworld = false;
-      model.expansions.deltaProject = false;
-      model.expansions.postlude = false;
-
-      model.solarPhaseOption = true;
-      model.draftVariant = true;
-      model.showOtherPlayersVP = true;
-      model.randomFirstPlayer = true;
-      model.randomMA = RandomMAOptionType.LIMITED;
-      model.soloTR = false;
-      break;
+    model.draftVariant = true;
+    model.showOtherPlayersVP = true;
+    model.randomFirstPlayer = true;
+    model.solarPhaseOption = false;
+    model.soloTR = false;
+    break;
+  }
+  case 'all_official': {
+    if (model.playersCount === 1) {
+      model.playersCount = 3;
     }
-    case 'classic': {
-      if (model.playersCount === 1) {
-        model.playersCount = 3;
-      }
-      model.allOfficialExpansions = false;
-      model.expansions.corpera = true;
-      model.expansions.prelude = false;
-      model.expansions.prelude2 = false;
-      model.expansions.venus = false;
-      model.expansions.colonies = false;
-      model.expansions.turmoil = false;
-      model.expansions.promo = false;
-      model.expansions.community = false;
-      model.expansions.ares = false;
-      model.expansions.moon = false;
-      model.expansions.pathfinders = false;
-      model.expansions.ceo = false;
-      model.expansions.starwars = false;
-      model.expansions.underworld = false;
-      model.expansions.deltaProject = false;
-      model.expansions.postlude = false;
+    model.allOfficialExpansions = true;
+    model.expansions.corpera = true;
+    model.expansions.prelude = true;
+    model.expansions.prelude2 = true;
+    model.expansions.venus = true;
+    model.expansions.colonies = true;
+    model.expansions.turmoil = true;
+    model.expansions.promo = true;
 
-      model.draftVariant = true;
-      model.solarPhaseOption = false;
-      model.soloTR = false;
-      break;
+    model.expansions.community = false;
+    model.expansions.ares = false;
+    model.expansions.moon = false;
+    model.expansions.pathfinders = false;
+    model.expansions.ceo = false;
+    model.expansions.starwars = false;
+    model.expansions.underworld = false;
+    model.expansions.deltaProject = false;
+    model.expansions.postlude = false;
+
+    model.solarPhaseOption = true;
+    model.draftVariant = true;
+    model.showOtherPlayersVP = true;
+    model.randomFirstPlayer = true;
+    model.randomMA = RandomMAOptionType.LIMITED;
+    model.soloTR = false;
+    break;
+  }
+  case 'classic': {
+    if (model.playersCount === 1) {
+      model.playersCount = 3;
     }
-    case 'solo': {
-      model.playersCount = 1;
-      model.allOfficialExpansions = false;
-      model.expansions.corpera = true;
-      model.expansions.prelude = false;
-      model.expansions.prelude2 = false;
-      model.expansions.venus = false;
-      model.expansions.colonies = false;
-      model.expansions.turmoil = false;
-      model.expansions.promo = false;
-      model.expansions.community = false;
-      model.expansions.ares = false;
-      model.expansions.moon = false;
-      model.expansions.pathfinders = false;
-      model.expansions.ceo = false;
-      model.expansions.starwars = false;
-      model.expansions.underworld = false;
-      model.expansions.deltaProject = false;
-      model.expansions.postlude = false;
+    model.allOfficialExpansions = false;
+    model.expansions.corpera = true;
+    model.expansions.prelude = false;
+    model.expansions.prelude2 = false;
+    model.expansions.venus = false;
+    model.expansions.colonies = false;
+    model.expansions.turmoil = false;
+    model.expansions.promo = false;
+    model.expansions.community = false;
+    model.expansions.ares = false;
+    model.expansions.moon = false;
+    model.expansions.pathfinders = false;
+    model.expansions.ceo = false;
+    model.expansions.starwars = false;
+    model.expansions.underworld = false;
+    model.expansions.deltaProject = false;
+    model.expansions.postlude = false;
 
-      model.soloTR = true;
-      model.draftVariant = false;
-      break;
+    model.draftVariant = true;
+    model.solarPhaseOption = false;
+    model.soloTR = false;
+    break;
+  }
+  case 'solo': {
+    model.playersCount = 1;
+    model.allOfficialExpansions = false;
+    model.expansions.corpera = true;
+    model.expansions.prelude = false;
+    model.expansions.prelude2 = false;
+    model.expansions.venus = false;
+    model.expansions.colonies = false;
+    model.expansions.turmoil = false;
+    model.expansions.promo = false;
+    model.expansions.community = false;
+    model.expansions.ares = false;
+    model.expansions.moon = false;
+    model.expansions.pathfinders = false;
+    model.expansions.ceo = false;
+    model.expansions.starwars = false;
+    model.expansions.underworld = false;
+    model.expansions.deltaProject = false;
+    model.expansions.postlude = false;
+
+    model.soloTR = true;
+    model.draftVariant = false;
+    break;
+  }
+  case 'all_in': {
+    if (model.playersCount === 1) {
+      model.playersCount = 3;
     }
-    case 'all_in': {
-      if (model.playersCount === 1) {
-        model.playersCount = 3;
-      }
-      model.allOfficialExpansions = true;
-      model.expansions.corpera = true;
-      model.expansions.prelude = true;
-      model.expansions.prelude2 = true;
-      model.expansions.venus = true;
-      model.expansions.colonies = true;
-      model.expansions.turmoil = true;
-      model.expansions.promo = true;
+    model.allOfficialExpansions = true;
+    model.expansions.corpera = true;
+    model.expansions.prelude = true;
+    model.expansions.prelude2 = true;
+    model.expansions.venus = true;
+    model.expansions.colonies = true;
+    model.expansions.turmoil = true;
+    model.expansions.promo = true;
 
-      model.expansions.community = true;
-      model.expansions.ares = true;
-      model.expansions.moon = true;
-      model.expansions.pathfinders = true;
-      model.expansions.ceo = true;
+    model.expansions.community = true;
+    model.expansions.ares = true;
+    model.expansions.moon = true;
+    model.expansions.pathfinders = true;
+    model.expansions.ceo = true;
 
-      model.solarPhaseOption = true;
-      model.draftVariant = true;
-      model.showOtherPlayersVP = true;
-      model.randomFirstPlayer = true;
-      model.randomMA = RandomMAOptionType.LIMITED;
-      model.soloTR = false;
-      break;
-    }
+    model.solarPhaseOption = true;
+    model.draftVariant = true;
+    model.showOtherPlayersVP = true;
+    model.randomFirstPlayer = true;
+    model.randomMA = RandomMAOptionType.LIMITED;
+    model.soloTR = false;
+    break;
+  }
   }
 }

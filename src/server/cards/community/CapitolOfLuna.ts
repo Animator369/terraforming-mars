@@ -13,7 +13,7 @@ export class CapitolOfLuna extends PreludeCard {
     super({
       name: CardName.CAPITOL_OF_LUNA,
       tags: [Tag.EARTH],
-	  victoryPoints: {tag: Tag.EARTH, per: 2},
+      victoryPoints: {tag: Tag.EARTH, per: 2},
       behavior: {
         production: {megacredits: 1},
       },
@@ -22,14 +22,14 @@ export class CapitolOfLuna extends PreludeCard {
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => pb.megacredits(1));
           b.cards(1).br;
-		  b.cards(1, {secondaryTag: Tag.EARTH}).colon().megacredits(-4);
+          b.cards(1, {secondaryTag: Tag.EARTH}).colon().megacredits(-4);
         }),
         description: 'Increase your MC production 1 step. Draw a card. The first card you play with an Earth tag, costs 4 MC less.',
       },
     });
   }
 
-	// Эффект розыгрыша: добираем карту (производство начисляется через behavior)
+  // Эффект розыгрыша: добираем карту (производство начисляется через behavior)
   public override play(player: Player) {
     player.drawCard(1);
     return undefined;

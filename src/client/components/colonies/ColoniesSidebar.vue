@@ -17,7 +17,7 @@
 
     <!-- Контент со списком колоний и флотами -->
     <div class="drawer-content">
-      <slot />
+      <slot ></slot>
     </div>
   </aside>
 </template>

@@ -330,7 +330,8 @@ export class PostludeExpansion {
     }
 
     if (res.steel && res.titanium && res.steelSpaces && res.titaniumSpaces) {
-      const common = res.steelSpaces.filter((s) => res.titaniumSpaces!.some((t) => t.id === s.id));
+      const titaniumSpaces = res.titaniumSpaces;
+      const common = res.steelSpaces.filter((s) => titaniumSpaces.some((t) => t.id === s.id));
       res.commonSpaces = common;
       if (common.length === 0) {
         res.exclusiveSteelTitanium = true;

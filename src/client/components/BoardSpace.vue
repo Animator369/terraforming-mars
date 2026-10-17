@@ -8,7 +8,7 @@
     <div class="board-space-text" v-if="text" v-i18n>{{ text }}</div>
     <Bonus :bonus="space.bonus" v-if="showBonus"/>
     <template v-if="tileView === 'coords'">
-      <div class="board-space-coords">{{ getSpaceName(space.id) }}</div>
+      <div class="board-space-coords">{{ space.a9 ?? 'n/a' }}</div>
     </template>
     <template v-if="tileView === 'show'">
       <div :class="playerColorCss" v-if="space.color !== undefined && space.upgradeTile === undefined"></div>
@@ -44,7 +44,6 @@ import {TileView} from '@/client/components/board/TileView';
 import {SpaceModel} from '@/common/models/SpaceModel';
 import {getPreferences} from '../utils/PreferencesManager';
 import {ClaimedToken} from '@/common/underworld/UnderworldPlayerData';
-import {getSpaceName} from '@/common/boards/spaces';
 import {SpaceType} from '@/common/boards/SpaceType';
 export default defineComponent({
   name: 'BoardSpace',
@@ -64,9 +63,6 @@ export default defineComponent({
       type: String as () => TileView,
       required: true,
     },
-  },
-  data() {
-    return {};
   },
   components: {
     Bonus,
@@ -101,9 +97,6 @@ export default defineComponent({
       return {token: this.space.undergroundResource, shelter: false, active: false};
     },
 
-    getSpaceName(): typeof getSpaceName {
-      return getSpaceName;
-    },
     SpaceType(): typeof SpaceType {
       return SpaceType;
     },

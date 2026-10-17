@@ -269,7 +269,7 @@ abstract class Builder<T> {
    * Add a greenery.
    *
    * size: the tile size. Default is medium.
-   * withO2: Show the superscript oxygen icon. Defualt is true.
+   * withO2: Show the superscript oxygen icon. Default is true.
    * any: for all players, Default is false.
    */
   public greenery(options?: {size?: Size, withO2?: boolean, any?: boolean}) {

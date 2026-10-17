@@ -26,7 +26,7 @@
       :deckSize = "game.deckSize"
       :discardPileSize = "game.discardPileSize"
       :otherDeckSizes = "game.otherDeckSizes"
-	  @toggleColonies="isColoniesOpen = !isColoniesOpen"/>
+      @toggleColonies="isColoniesOpen = !isColoniesOpen"/>
 
     <div v-if="thisPlayer.tableau.length > 0">
       <div class="player_home_block">
@@ -130,27 +130,27 @@
     </template>
 
     <!-- Боковая выдвижная панель колоний и торговых флотов -->
-    <ColoniesSidebar 
-	  v-if="game.colonies.length > 0"
-	  :isOpen="isColoniesOpen"
-	  :player="thisPlayer"
-	  @close="isColoniesOpen = false"
-	>
-	  <div class="player_home_block" ref="colonies" id="shortkey-colonies">
-		<a name="colonies" class="player_home_anchor hotkey-target"></a>
-		<DynamicTitle title="Colonies" :color="thisPlayer.color"/>
-		<div class="colonies-fleets-cont">
-		  <div class="colonies-player-fleets" v-for="colonyPlayer in playerView.players" :key="colonyPlayer.color">
-			<div :class="'colonies-fleet colonies-fleet-'+ colonyPlayer.color" v-for="idx in getFleetsCountRange(colonyPlayer)" :key="idx"></div>
-		  </div>
-		</div>
-		<div class="player_home_colony_cont">
-		  <div class="player_home_colony" v-for="colony in game.colonies" :key="colony.name">
-			<Colony :colony="colony" :active="colony.isActive"/>
-		  </div>
-		</div>
-	  </div>
-	</ColoniesSidebar>
+    <ColoniesSidebar
+      v-if="game.colonies.length > 0"
+      :isOpen="isColoniesOpen"
+      :player="thisPlayer"
+      @close="isColoniesOpen = false"
+    >
+      <div class="player_home_block" ref="colonies" id="shortkey-colonies">
+        <a name="colonies" class="player_home_anchor hotkey-target"></a>
+        <DynamicTitle title="Colonies" :color="thisPlayer.color"/>
+        <div class="colonies-fleets-cont">
+          <div class="colonies-player-fleets" v-for="colonyPlayer in playerView.players" :key="colonyPlayer.color">
+            <div :class="'colonies-fleet colonies-fleet-'+ colonyPlayer.color" v-for="idx in getFleetsCountRange(colonyPlayer)" :key="idx"></div>
+          </div>
+        </div>
+        <div class="player_home_colony_cont">
+          <div class="player_home_colony" v-for="colony in game.colonies" :key="colony.name">
+            <Colony :colony="colony" :active="colony.isActive"/>
+          </div>
+        </div>
+      </div>
+    </ColoniesSidebar>
 
     <div>
       <a :href="'/spectator?id=' +game.spectatorId" target="_blank" rel="noopener noreferrer" v-i18n>Spectator link</a>
@@ -213,16 +213,16 @@ export default defineComponent({
   name: 'PlayerHome',
   mixins: [HomeMixin],
   data(): PlayerHomeModel & { isColoniesOpen: boolean } {
-	  const preferences = getPreferences();
-	  return {
-		showHand: !preferences.hide_hand,
-		showActiveCards: !preferences.hide_active_cards,
-		showAutomatedCards: !preferences.hide_automated_cards,
-		showEventCards: !preferences.hide_event_cards,
-		handSortOrder: undefined,
-		isColoniesOpen: false, // флаг открытия панели
-	  };
-	},
+    const preferences = getPreferences();
+    return {
+      showHand: !preferences.hide_hand,
+      showActiveCards: !preferences.hide_active_cards,
+      showAutomatedCards: !preferences.hide_automated_cards,
+      showEventCards: !preferences.hide_event_cards,
+      handSortOrder: undefined,
+      isColoniesOpen: false, // флаг открытия панели
+    };
+  },
   watch: {
     showHand: function hide_hand() {
       PreferencesManager.INSTANCE.set('hide_hand', !this.showHand);
@@ -311,7 +311,7 @@ export default defineComponent({
     PurgeWarning,
     UndergroundTokens,
     KeyboardShortcuts,
-	ColoniesSidebar,
+    ColoniesSidebar,
   },
   methods: {
     isPlayerActing(playerView: PlayerViewModel) : boolean {
